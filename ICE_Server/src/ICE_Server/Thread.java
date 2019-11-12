@@ -37,6 +37,7 @@ public class Thread {
                 //Input from Client
                 inputData = reader.readLine();
                 System.out.print(inputData+"\n");
+                game.update(inputData);
 
                 //Output to Client
                 writer.println(game.refresh()+"\n");

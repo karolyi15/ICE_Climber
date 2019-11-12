@@ -1,6 +1,6 @@
 package ICE_Server;
 
-import com.github.cliftonlabs.json_simple.JsonObject;
+import  org.json.simple.*;
 
 public class Character {
 
@@ -17,16 +17,16 @@ public class Character {
         this.lives=3;
     }
 
-    public void update(JsonObject json){
+    public void update(JSONObject json){
 
-        this.posX= (int) json.get("posX");
-        this.posY=(int) json.get("posY");
-        this.score=(int) json.get("score");
-        this.lives=(int) json.get(lives);
+        this.posX= (int)((long) json.get("posX"));
+        this.posY=(int) ((long)json.get("posY"));
+        this.score=(int) ((long)json.get("score"));
+        this.lives=(int) ((long)json.get("lives"));
     }
 
-    public JsonObject refresh(){
-        JsonObject json=new JsonObject();
+    public JSONObject refresh(){
+        JSONObject json=new JSONObject ();
         json.put("posX",this.posX);
         json.put("posY", this.posY);
         json.put("score",this.score);
