@@ -26,7 +26,7 @@ int initGame() {
     ALLEGRO_EVENT_QUEUE *eventQueue=NULL;
     ALLEGRO_TIMER *timer=NULL;
     ALLEGRO_BITMAP *bouncer=NULL;
-    //ALLEGRO_BITMAP *image=NULL;
+    //ALLEGRO_BITMAP *player=NULL;
     float bouncer_x = screenW / 2.0 - bouncerSize / 2.0;
     float bouncer_y = screenH / 2.0 - bouncerSize / 2.0;
     float bouncer_dx = -4.0, bouncer_dy = 4.0;
@@ -67,7 +67,7 @@ int initGame() {
     }
 
     //LOAD IMAGE
-    /*image = al_load_bitmap("/home/gunther/CLionProjects/ICE_Client/imgs/Sprites2.png");
+    /*player = al_load_bitmap("/home/gunther/CLionProjects/ICE_Client/imgs/Sprites2.png");
     if(!image) {
         al_show_native_message_box(display, "Error", "Error", "Failed to load image!",
                                    NULL, ALLEGRO_MESSAGEBOX_ERROR);

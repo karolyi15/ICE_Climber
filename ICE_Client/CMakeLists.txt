@@ -8,6 +8,7 @@ add_executable(untitled main.c ICE_Gui.c)
 INCLUDE_DIRECTORIES( allegro/5.0.11/include )
 
 target_link_libraries(untitled json-c)
+
 LINK_DIRECTORIES( allegro/5.0.11/lib )
 
 
