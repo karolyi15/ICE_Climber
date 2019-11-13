@@ -1,0 +1,36 @@
+#IncludeRegexLine: ^[ 	]*[#%][ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+/home/gunther/CLionProjects/ICE_Client/ICE_Gui.c
+stdio.h
+-
+allegro5/allegro.h
+-
+allegro5/allegro_native_dialog.h
+-
+allegro5/allegro_image.h
+/home/gunther/CLionProjects/ICE_Client/allegro5/allegro_image.h
+allegro5/allegro_primitives.h
+/home/gunther/CLionProjects/ICE_Client/allegro5/allegro_primitives.h
+unistd.h
+-
+
+/home/gunther/CLionProjects/ICE_Client/main.c
+stdio.h
+-
+sys/socket.h
+-
+arpa/inet.h
+-
+unistd.h
+-
+string.h
+-
+json-c/json.h
+-
+
