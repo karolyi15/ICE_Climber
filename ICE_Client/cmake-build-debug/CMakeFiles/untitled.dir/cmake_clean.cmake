@@ -1,5 +1,4 @@
 file(REMOVE_RECURSE
-  "CMakeFiles/untitled.dir/ICE_Gui.c.o"
   "CMakeFiles/untitled.dir/main.c.o"
   "untitled"
   "untitled.pdb"

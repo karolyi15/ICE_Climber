@@ -36,17 +36,16 @@ public class Thread {
 
 
             do {
+
                 //Input from Client
-                System.out.print("\nPrepare to read\n");
                 reader.read(test,0,1024);
                 System.out.println(String.valueOf(test).trim());
-                //game.update(inputData);
+                game.update(String.valueOf(test).trim());
 
 
-                System.out.print("\nPreparing to write");
+
                 //Output to Client
                 writer.println(game.refresh());
-                System.out.print("\nwrited");
                 this.running=false;
 
             } while (running);

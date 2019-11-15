@@ -80,9 +80,6 @@
 				</MakeCommands>
 			</Target>
 		</Build>
-		<Unit filename="/home/gunther/CLionProjects/ICE_Client/ICE_Gui.c">
-			<Option target="untitled"/>
-		</Unit>
 		<Unit filename="/home/gunther/CLionProjects/ICE_Client/main.c">
 			<Option target="untitled"/>
 		</Unit>

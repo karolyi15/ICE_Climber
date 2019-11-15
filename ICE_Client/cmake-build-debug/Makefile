@@ -123,33 +123,6 @@ untitled/fast:
 	$(MAKE) -f CMakeFiles/untitled.dir/build.make CMakeFiles/untitled.dir/build
 .PHONY : untitled/fast
 
-ICE_Gui.o: ICE_Gui.c.o
-
-.PHONY : ICE_Gui.o
-
-# target to build an object file
-ICE_Gui.c.o:
-	$(MAKE) -f CMakeFiles/untitled.dir/build.make CMakeFiles/untitled.dir/ICE_Gui.c.o
-.PHONY : ICE_Gui.c.o
-
-ICE_Gui.i: ICE_Gui.c.i
-
-.PHONY : ICE_Gui.i
-
-# target to preprocess a source file
-ICE_Gui.c.i:
-	$(MAKE) -f CMakeFiles/untitled.dir/build.make CMakeFiles/untitled.dir/ICE_Gui.c.i
-.PHONY : ICE_Gui.c.i
-
-ICE_Gui.s: ICE_Gui.c.s
-
-.PHONY : ICE_Gui.s
-
-# target to generate assembly for a file
-ICE_Gui.c.s:
-	$(MAKE) -f CMakeFiles/untitled.dir/build.make CMakeFiles/untitled.dir/ICE_Gui.c.s
-.PHONY : ICE_Gui.c.s
-
 main.o: main.c.o
 
 .PHONY : main.o
@@ -186,9 +159,6 @@ help:
 	@echo "... rebuild_cache"
 	@echo "... untitled"
 	@echo "... edit_cache"
-	@echo "... ICE_Gui.o"
-	@echo "... ICE_Gui.i"
-	@echo "... ICE_Gui.s"
 	@echo "... main.o"
 	@echo "... main.i"
 	@echo "... main.s"
