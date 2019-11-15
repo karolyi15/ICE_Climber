@@ -14,7 +14,8 @@ public class Game {
 
             JSONParser parser = new JSONParser();
             JSONObject  json = (JSONObject ) parser.parse(input);
-            this.Popo.update((JSONObject) json.get("Popo"));
+            //this.Popo.update((JSONObject) json.get("Popo"));
+            this.Popo.update(json);
 
         }catch (ParseException e){
             e.printStackTrace();
@@ -27,8 +28,9 @@ public class Game {
 
     public String refresh(){
         JSONObject json=new JSONObject ();
-        json.put("Popo",this.Popo.refresh());
-        return json.toJSONString();
+        //json.put("Popo",this.Popo.refresh());
+        //return json.toJSONString();
+        return this.Popo.refresh().toJSONString();
 
     }
 

@@ -19,7 +19,8 @@ public class Thread {
             //Read data from the client (read to byte array)
             InputStream input = socket.getInputStream();
             //Set byte array to string
-            BufferedReader reader = new BufferedReader(new InputStreamReader(input));
+            //InputStreamReader ireader=new InputStreamReader(input);
+            BufferedReader reader = new BufferedReader(new InputStreamReader(input),1024);
 
             //************** Send data to client ***************//
 
@@ -30,17 +31,22 @@ public class Thread {
             //writer.println("Hellow World");
 
             String inputData;
+            char test[]=new char[1024];
             Game game=new Game();
 
 
             do {
                 //Input from Client
-                inputData = reader.readLine();
-                System.out.print(inputData+"\n");
-                game.update(inputData);
+                System.out.print("\nPrepare to read\n");
+                reader.read(test,0,1024);
+                System.out.println(String.valueOf(test).trim());
+                //game.update(inputData);
 
+
+                System.out.print("\nPreparing to write");
                 //Output to Client
-                writer.println(game.refresh()+"\n");
+                writer.println(game.refresh());
+                System.out.print("\nwrited");
                 this.running=false;
 
             } while (running);

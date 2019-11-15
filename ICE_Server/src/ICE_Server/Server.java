@@ -18,7 +18,7 @@ public class Server {
 
         //Creates a server socket, handle 50 queued connections
         this.serverSocket = new ServerSocket(port);
-        System.out.print("ICE_Server.Server is listening in port: " + port+"\n");
+        System.out.print("ICE_Server is listening in port: " + port+"\n");
 
         while (true) {
             //*************** Init ICE_Server.Client Socket ****************//
