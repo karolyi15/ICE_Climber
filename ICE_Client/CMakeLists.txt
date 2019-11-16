@@ -3,7 +3,7 @@ project(untitled C)
 
 set(CMAKE_C_STANDARD 99)
 
-add_executable(untitled main.c)
+add_executable(untitled main.c ICE_Game.c ICE_Game.h ICE_Json.c ICE_Json.h)
 
 INCLUDE_DIRECTORIES( allegro/5.0.11/include )
 

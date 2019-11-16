@@ -4,6 +4,8 @@ set(CMAKE_DEPENDS_LANGUAGES
   )
 # The set of files for implicit dependencies of each language:
 set(CMAKE_DEPENDS_CHECK_C
+  "/home/gunther/CLionProjects/ICE_Client/ICE_Game.c" "/home/gunther/CLionProjects/ICE_Client/cmake-build-debug/CMakeFiles/untitled.dir/ICE_Game.c.o"
+  "/home/gunther/CLionProjects/ICE_Client/ICE_Json.c" "/home/gunther/CLionProjects/ICE_Client/cmake-build-debug/CMakeFiles/untitled.dir/ICE_Json.c.o"
   "/home/gunther/CLionProjects/ICE_Client/main.c" "/home/gunther/CLionProjects/ICE_Client/cmake-build-debug/CMakeFiles/untitled.dir/main.c.o"
   )
 set(CMAKE_C_COMPILER_ID "GNU")

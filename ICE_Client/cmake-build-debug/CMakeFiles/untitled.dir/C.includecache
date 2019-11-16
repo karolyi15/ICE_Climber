@@ -21,10 +21,10 @@ json-c/json.h
 -
 allegro5/allegro.h
 -
-allegro5/allegro_native_dialog.h
--
 allegro5/allegro_image.h
 /home/gunther/CLionProjects/ICE_Client/allegro5/allegro_image.h
+allegro5/allegro_native_dialog.h
+-
 allegro5/allegro_primitives.h
 /home/gunther/CLionProjects/ICE_Client/allegro5/allegro_primitives.h
 

@@ -6,8 +6,9 @@
 #include <string.h>
 #include <json-c/json.h>
 #include <allegro5/allegro.h>
-#include <allegro5/allegro_native_dialog.h>
 #include "allegro5/allegro_image.h"
+
+#include <allegro5/allegro_native_dialog.h>
 #include "allegro5/allegro_primitives.h"
 
 #define PORT 9090
@@ -51,23 +52,29 @@ void jsonParser(char jsonString[]) {
 
 }
 //*******************************************************************************************************************************
-const char *jsonWriter(int posX, int posY, int score, int lives){
+const char *jsonWriter(int id,int posX, int posY, int score, int lives){
 
     //CREATE A NEW JSON OBJECT
     json_object *jsonObject=json_object_new_object();
+    json_object *jsonObjectPopo=json_object_new_object();
 
     //CREATE JSON DATA
+    json_object *jsonId=json_object_new_int(id);
     json_object *jsonPosX=json_object_new_int(posX);
     json_object *jsonPosY=json_object_new_int(posY);
     json_object *jsonScore=json_object_new_int(score);
     json_object *jsonLives=json_object_new_int(lives);
 
     //ADDING DATA TO JSON OBJECT
-    json_object_object_add(jsonObject,"posX",jsonPosX);
-    json_object_object_add(jsonObject,"posY",jsonPosY);
-    json_object_object_add(jsonObject,"score",jsonScore);
-    json_object_object_add(jsonObject,"lives",jsonLives);
+    json_object_object_add(jsonObjectPopo,"posX",jsonPosX);
+    json_object_object_add(jsonObjectPopo,"posY",jsonPosY);
+    json_object_object_add(jsonObjectPopo,"score",jsonScore);
+    json_object_object_add(jsonObjectPopo,"lives",jsonLives);
 
+    json_object_object_add(jsonObject,"id",jsonId);
+    json_object_object_add(jsonObject,"Popo",jsonObjectPopo);
+
+    printf(json_object_to_json_string(jsonObject));
     return json_object_to_json_string(jsonObject);
 
 }
@@ -77,11 +84,9 @@ const char *jsonWriter(int posX, int posY, int score, int lives){
 
 int initClient(char jsonString[]) {
 
-    int sock = 0, valread;
+    int sock = 0;
     struct sockaddr_in serv_addr;
 
-
-    //char  *hello="hola";
     const char *buffer[1024] = {0};
 
     if ((sock = socket(AF_INET, SOCK_STREAM, 0)) < 0) {
@@ -93,7 +98,7 @@ int initClient(char jsonString[]) {
     serv_addr.sin_port = htons(PORT);
 
     // Convert IPv4 and IPv6 addresses from text to binary form
-    if (inet_pton(AF_INET, "127.0.0.1", &serv_addr.sin_addr) <= 0) {
+    if (inet_pton(AF_INET, "192.168.0.134", &serv_addr.sin_addr) <= 0) {
         printf("\nInvalid address/ Address not supported \n");
         return -1;
     }
@@ -103,35 +108,35 @@ int initClient(char jsonString[]) {
         return -1;
     }
 
-    //send(sock , hello , strlen(hello) , 0 );
 
-    //printf("se enviara un mensaje\n");
 
-    //bzero(buffer, sizeof(buffer));
     bzero(buffer, sizeof(buffer));
 
     write(sock, jsonString, strlen(jsonString));
     bzero(buffer, sizeof(buffer));
     read(sock, buffer, 1024);
 
-    //jsonParser(buffer);
+
     printf("%s", buffer);
+
+
     close(sock);
 }
 
 //************************************************************************************************************************
 int initGame() {
 
-    //INIT FIELDS
-    //const char *output[];
+
     ALLEGRO_DISPLAY *display=NULL;
     ALLEGRO_EVENT_QUEUE *eventQueue=NULL;
     ALLEGRO_TIMER *timer=NULL;
     ALLEGRO_BITMAP *bouncer=NULL;
     ALLEGRO_BITMAP *bouncer2=NULL;
-    //ALLEGRO_BITMAP *player=NULL;
+
     float bouncer_x = screenW / 2.0 - bouncerSize / 2.0;
     float bouncer_y = screenH / 2.0 - bouncerSize / 2.0;
+    float bouncer2_x = screenW / 2.0 - bouncerSize / 2.0;
+    float bouncer2_y = screenH / 2.0 - bouncerSize / 2.0;
     float bouncer_dx = -4.0, bouncer_dy = 4.0;
     bool key[4] = { false, false, false, false };
     bool redraw=true;
@@ -142,13 +147,6 @@ int initGame() {
         printf("Fail to init Allegro");
         return -1;
     }
-
-    //HANDLE IMAGE LOADER ERROR
-    /*if(!al_init_image_addon()) {
-        al_show_native_message_box(display, "Error", "Error", "Failed to initialize al_init_image_addon!",
-                                   NULL, ALLEGRO_MESSAGEBOX_ERROR);
-        return 0;
-    }*/
 
     //HANDLE KEYBOARD EVENTS
     if(!al_install_keyboard()) {
@@ -168,16 +166,7 @@ int initGame() {
         printf("Fail to init Window");
         return -1;
     }
-
-    //LOAD IMAGE
-    /*player = al_load_bitmap("/home/gunther/CLionProjects/ICE_Client/imgs/Sprites2.png");
-    if(!image) {
-        al_show_native_message_box(display, "Error", "Error", "Failed to load image!",
-                                   NULL, ALLEGRO_MESSAGEBOX_ERROR);
-        al_destroy_display(display);
-        al_destroy_timer(timer);
-        return 0;
-    }*/
+    al_set_window_title(display,"ICE-CLimber");
 
     //CREATE BITMAP
     bouncer=al_create_bitmap(bouncerSize,bouncerSize);
@@ -198,9 +187,9 @@ int initGame() {
     al_clear_to_color(al_map_rgb(100, 0, 255));
     al_set_target_bitmap(al_get_backbuffer(display));
 
-    //al_set_target_bitmap(bouncer2);
-    //al_clear_to_color(al_map_rgb(100, 0, 255));
-    //al_set_target_bitmap(al_get_backbuffer(display));
+    al_set_target_bitmap(bouncer2);
+    al_clear_to_color(al_map_rgb(255, 0, 100));
+    al_set_target_bitmap(al_get_backbuffer(display));
 
 
     //CREATE AND MANAGE EVENT QUEUE
@@ -245,7 +234,7 @@ int initGame() {
                 bouncer_x += 4.0;
             }
 
-            initClient(jsonWriter(bouncer_x, bouncer_y, 0, 3));
+            //initClient(jsonWriter(1,bouncer_x, bouncer_y, 0, 3));
             redraw = true;
         }
         else if(event.type == ALLEGRO_EVENT_DISPLAY_CLOSE) {
@@ -300,6 +289,7 @@ int initGame() {
             redraw=false;
             al_clear_to_color(al_map_rgb(0,0,0));
             al_draw_bitmap(bouncer, bouncer_x, bouncer_y, 0);
+            al_draw_bitmap(bouncer2, bouncer2_x, bouncer2_y, 0);
             al_flip_display();
         }
 
