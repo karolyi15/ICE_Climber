@@ -1,64 +1,63 @@
 package ICE_Server;
 
+import ICE_Logic.Game;
 import java.io.*;
 import java.net.Socket;
 
+
 public class Thread {
-    private Socket socket;
-    private boolean running=true;
 
-    public Thread(Socket socket) {
+    //************************* Class Fields ****************************//
+    private Socket socket;//Socket from Java
+    private Game game;//Instance of Game class (Game room)
+    private boolean running=true;//Determines when while loop stops
 
+    //************************* Class Constructor ***********************//
+
+    //Constructor, needs a socket to listen request and a Game instance
+    //to update game data
+    public Thread(Socket socket,Game game) {
         this.socket=socket;
+        this.game=game;
     }
+
+    //*********************** Start Client Method ***********************//
+
+    //Handle Sockets connection (listening Requests)
 
     public void start(){
         try {
-            //************** Read data to client ****************//
-
             //Read data from the client (read to byte array)
             InputStream input = socket.getInputStream();
-            //Set byte array to string
-            //InputStreamReader ireader=new InputStreamReader(input);
             BufferedReader reader = new BufferedReader(new InputStreamReader(input),1024);
-
-            //************** Send data to client ***************//
 
             //Write data as a byte array
             OutputStream output = socket.getOutputStream();
             //Converts byte array to text format
             PrintWriter writer = new PrintWriter(output, true);
-            //writer.println("Hellow World");
 
-            String inputData;
-            char test[]=new char[1024];
-            Game game=new Game();
+            //Method Fields
+            char inputData[]=new char[1024];//Buffer (Char array)
 
-
+            //Do-While- Execute at least one time
+            //Read client input and returns the updated game data
             do {
 
-                //Input from Client
-                reader.read(test,0,1024);
-                System.out.println(String.valueOf(test).trim());
-                game.update(String.valueOf(test).trim());
+                reader.read(inputData,0,1024);
+                System.out.println(String.valueOf(inputData).trim());
+                this.game.update(String.valueOf(inputData).trim());
 
-
-
-                //Output to Client
-                writer.println(game.refresh());
+                writer.println(this.game.refresh());
                 this.running=false;
 
             } while (running);
 
-
-            //*********** Close client connection *************//
-            //ICE_Server.Server close socket connection but still work for other sockets
+            //Close socket connection
             socket.close();
         }catch (IOException e) {
             e.printStackTrace();
         }
     }
-
 
 }
 
