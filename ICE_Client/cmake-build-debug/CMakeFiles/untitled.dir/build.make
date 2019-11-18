@@ -57,60 +57,75 @@ include CMakeFiles/untitled.dir/progress.make
 # Include the compile flags for this target's objects.
 include CMakeFiles/untitled.dir/flags.make
 
-CMakeFiles/untitled.dir/main.c.o: CMakeFiles/untitled.dir/flags.make
-CMakeFiles/untitled.dir/main.c.o: ../main.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/gunther/CLionProjects/ICE_Client/cmake-build-debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building C object CMakeFiles/untitled.dir/main.c.o"
-	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/untitled.dir/main.c.o   -c /home/gunther/CLionProjects/ICE_Client/main.c
+CMakeFiles/untitled.dir/ICE_Sources/main.c.o: CMakeFiles/untitled.dir/flags.make
+CMakeFiles/untitled.dir/ICE_Sources/main.c.o: ../ICE_Sources/main.c
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/gunther/CLionProjects/ICE_Client/cmake-build-debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building C object CMakeFiles/untitled.dir/ICE_Sources/main.c.o"
+	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/untitled.dir/ICE_Sources/main.c.o   -c /home/gunther/CLionProjects/ICE_Client/ICE_Sources/main.c
 
-CMakeFiles/untitled.dir/main.c.i: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing C source to CMakeFiles/untitled.dir/main.c.i"
-	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -E /home/gunther/CLionProjects/ICE_Client/main.c > CMakeFiles/untitled.dir/main.c.i
+CMakeFiles/untitled.dir/ICE_Sources/main.c.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing C source to CMakeFiles/untitled.dir/ICE_Sources/main.c.i"
+	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -E /home/gunther/CLionProjects/ICE_Client/ICE_Sources/main.c > CMakeFiles/untitled.dir/ICE_Sources/main.c.i
 
-CMakeFiles/untitled.dir/main.c.s: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling C source to assembly CMakeFiles/untitled.dir/main.c.s"
-	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S /home/gunther/CLionProjects/ICE_Client/main.c -o CMakeFiles/untitled.dir/main.c.s
+CMakeFiles/untitled.dir/ICE_Sources/main.c.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling C source to assembly CMakeFiles/untitled.dir/ICE_Sources/main.c.s"
+	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S /home/gunther/CLionProjects/ICE_Client/ICE_Sources/main.c -o CMakeFiles/untitled.dir/ICE_Sources/main.c.s
 
-CMakeFiles/untitled.dir/ICE_Game.c.o: CMakeFiles/untitled.dir/flags.make
-CMakeFiles/untitled.dir/ICE_Game.c.o: ../ICE_Game.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/gunther/CLionProjects/ICE_Client/cmake-build-debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Building C object CMakeFiles/untitled.dir/ICE_Game.c.o"
-	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/untitled.dir/ICE_Game.c.o   -c /home/gunther/CLionProjects/ICE_Client/ICE_Game.c
+CMakeFiles/untitled.dir/ICE_Sources/ICE_Game.c.o: CMakeFiles/untitled.dir/flags.make
+CMakeFiles/untitled.dir/ICE_Sources/ICE_Game.c.o: ../ICE_Sources/ICE_Game.c
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/gunther/CLionProjects/ICE_Client/cmake-build-debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Building C object CMakeFiles/untitled.dir/ICE_Sources/ICE_Game.c.o"
+	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/untitled.dir/ICE_Sources/ICE_Game.c.o   -c /home/gunther/CLionProjects/ICE_Client/ICE_Sources/ICE_Game.c
 
-CMakeFiles/untitled.dir/ICE_Game.c.i: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing C source to CMakeFiles/untitled.dir/ICE_Game.c.i"
-	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -E /home/gunther/CLionProjects/ICE_Client/ICE_Game.c > CMakeFiles/untitled.dir/ICE_Game.c.i
+CMakeFiles/untitled.dir/ICE_Sources/ICE_Game.c.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing C source to CMakeFiles/untitled.dir/ICE_Sources/ICE_Game.c.i"
+	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -E /home/gunther/CLionProjects/ICE_Client/ICE_Sources/ICE_Game.c > CMakeFiles/untitled.dir/ICE_Sources/ICE_Game.c.i
 
-CMakeFiles/untitled.dir/ICE_Game.c.s: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling C source to assembly CMakeFiles/untitled.dir/ICE_Game.c.s"
-	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S /home/gunther/CLionProjects/ICE_Client/ICE_Game.c -o CMakeFiles/untitled.dir/ICE_Game.c.s
+CMakeFiles/untitled.dir/ICE_Sources/ICE_Game.c.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling C source to assembly CMakeFiles/untitled.dir/ICE_Sources/ICE_Game.c.s"
+	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S /home/gunther/CLionProjects/ICE_Client/ICE_Sources/ICE_Game.c -o CMakeFiles/untitled.dir/ICE_Sources/ICE_Game.c.s
 
-CMakeFiles/untitled.dir/ICE_Json.c.o: CMakeFiles/untitled.dir/flags.make
-CMakeFiles/untitled.dir/ICE_Json.c.o: ../ICE_Json.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/gunther/CLionProjects/ICE_Client/cmake-build-debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Building C object CMakeFiles/untitled.dir/ICE_Json.c.o"
-	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/untitled.dir/ICE_Json.c.o   -c /home/gunther/CLionProjects/ICE_Client/ICE_Json.c
+CMakeFiles/untitled.dir/ICE_Sources/ICE_Json.c.o: CMakeFiles/untitled.dir/flags.make
+CMakeFiles/untitled.dir/ICE_Sources/ICE_Json.c.o: ../ICE_Sources/ICE_Json.c
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/gunther/CLionProjects/ICE_Client/cmake-build-debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Building C object CMakeFiles/untitled.dir/ICE_Sources/ICE_Json.c.o"
+	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/untitled.dir/ICE_Sources/ICE_Json.c.o   -c /home/gunther/CLionProjects/ICE_Client/ICE_Sources/ICE_Json.c
 
-CMakeFiles/untitled.dir/ICE_Json.c.i: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing C source to CMakeFiles/untitled.dir/ICE_Json.c.i"
-	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -E /home/gunther/CLionProjects/ICE_Client/ICE_Json.c > CMakeFiles/untitled.dir/ICE_Json.c.i
+CMakeFiles/untitled.dir/ICE_Sources/ICE_Json.c.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing C source to CMakeFiles/untitled.dir/ICE_Sources/ICE_Json.c.i"
+	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -E /home/gunther/CLionProjects/ICE_Client/ICE_Sources/ICE_Json.c > CMakeFiles/untitled.dir/ICE_Sources/ICE_Json.c.i
 
-CMakeFiles/untitled.dir/ICE_Json.c.s: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling C source to assembly CMakeFiles/untitled.dir/ICE_Json.c.s"
-	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S /home/gunther/CLionProjects/ICE_Client/ICE_Json.c -o CMakeFiles/untitled.dir/ICE_Json.c.s
+CMakeFiles/untitled.dir/ICE_Sources/ICE_Json.c.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling C source to assembly CMakeFiles/untitled.dir/ICE_Sources/ICE_Json.c.s"
+	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S /home/gunther/CLionProjects/ICE_Client/ICE_Sources/ICE_Json.c -o CMakeFiles/untitled.dir/ICE_Sources/ICE_Json.c.s
+
+CMakeFiles/untitled.dir/ICE_Sources/ICE_Socket.c.o: CMakeFiles/untitled.dir/flags.make
+CMakeFiles/untitled.dir/ICE_Sources/ICE_Socket.c.o: ../ICE_Sources/ICE_Socket.c
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/gunther/CLionProjects/ICE_Client/cmake-build-debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_4) "Building C object CMakeFiles/untitled.dir/ICE_Sources/ICE_Socket.c.o"
+	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/untitled.dir/ICE_Sources/ICE_Socket.c.o   -c /home/gunther/CLionProjects/ICE_Client/ICE_Sources/ICE_Socket.c
+
+CMakeFiles/untitled.dir/ICE_Sources/ICE_Socket.c.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing C source to CMakeFiles/untitled.dir/ICE_Sources/ICE_Socket.c.i"
+	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -E /home/gunther/CLionProjects/ICE_Client/ICE_Sources/ICE_Socket.c > CMakeFiles/untitled.dir/ICE_Sources/ICE_Socket.c.i
+
+CMakeFiles/untitled.dir/ICE_Sources/ICE_Socket.c.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling C source to assembly CMakeFiles/untitled.dir/ICE_Sources/ICE_Socket.c.s"
+	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S /home/gunther/CLionProjects/ICE_Client/ICE_Sources/ICE_Socket.c -o CMakeFiles/untitled.dir/ICE_Sources/ICE_Socket.c.s
 
 # Object files for target untitled
 untitled_OBJECTS = \
-"CMakeFiles/untitled.dir/main.c.o" \
-"CMakeFiles/untitled.dir/ICE_Game.c.o" \
-"CMakeFiles/untitled.dir/ICE_Json.c.o"
+"CMakeFiles/untitled.dir/ICE_Sources/main.c.o" \
+"CMakeFiles/untitled.dir/ICE_Sources/ICE_Game.c.o" \
+"CMakeFiles/untitled.dir/ICE_Sources/ICE_Json.c.o" \
+"CMakeFiles/untitled.dir/ICE_Sources/ICE_Socket.c.o"
 
 # External object files for target untitled
 untitled_EXTERNAL_OBJECTS =
 
-untitled: CMakeFiles/untitled.dir/main.c.o
-untitled: CMakeFiles/untitled.dir/ICE_Game.c.o
-untitled: CMakeFiles/untitled.dir/ICE_Json.c.o
+untitled: CMakeFiles/untitled.dir/ICE_Sources/main.c.o
+untitled: CMakeFiles/untitled.dir/ICE_Sources/ICE_Game.c.o
+untitled: CMakeFiles/untitled.dir/ICE_Sources/ICE_Json.c.o
+untitled: CMakeFiles/untitled.dir/ICE_Sources/ICE_Socket.c.o
 untitled: CMakeFiles/untitled.dir/build.make
 untitled: CMakeFiles/untitled.dir/link.txt
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=/home/gunther/CLionProjects/ICE_Client/cmake-build-debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_4) "Linking C executable untitled"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=/home/gunther/CLionProjects/ICE_Client/cmake-build-debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_5) "Linking C executable untitled"
 	$(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/untitled.dir/link.txt --verbose=$(VERBOSE)
 
 # Rule to build all files generated by this target.

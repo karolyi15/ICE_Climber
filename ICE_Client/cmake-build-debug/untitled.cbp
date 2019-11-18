@@ -80,19 +80,25 @@
 				</MakeCommands>
 			</Target>
 		</Build>
-		<Unit filename="/home/gunther/CLionProjects/ICE_Client/ICE_Game.c">
+		<Unit filename="/home/gunther/CLionProjects/ICE_Client/ICE_Headers/ICE_Game.h">
 			<Option target="untitled"/>
 		</Unit>
-		<Unit filename="/home/gunther/CLionProjects/ICE_Client/ICE_Game.h">
+		<Unit filename="/home/gunther/CLionProjects/ICE_Client/ICE_Headers/ICE_Json.h">
 			<Option target="untitled"/>
 		</Unit>
-		<Unit filename="/home/gunther/CLionProjects/ICE_Client/ICE_Json.c">
+		<Unit filename="/home/gunther/CLionProjects/ICE_Client/ICE_Headers/ICE_Socket.h">
 			<Option target="untitled"/>
 		</Unit>
-		<Unit filename="/home/gunther/CLionProjects/ICE_Client/ICE_Json.h">
+		<Unit filename="/home/gunther/CLionProjects/ICE_Client/ICE_Sources/ICE_Game.c">
 			<Option target="untitled"/>
 		</Unit>
-		<Unit filename="/home/gunther/CLionProjects/ICE_Client/main.c">
+		<Unit filename="/home/gunther/CLionProjects/ICE_Client/ICE_Sources/ICE_Json.c">
+			<Option target="untitled"/>
+		</Unit>
+		<Unit filename="/home/gunther/CLionProjects/ICE_Client/ICE_Sources/ICE_Socket.c">
+			<Option target="untitled"/>
+		</Unit>
+		<Unit filename="/home/gunther/CLionProjects/ICE_Client/ICE_Sources/main.c">
 			<Option target="untitled"/>
 		</Unit>
 		<Unit filename="/home/gunther/CLionProjects/ICE_Client/CMakeLists.txt">

@@ -123,86 +123,113 @@ untitled/fast:
 	$(MAKE) -f CMakeFiles/untitled.dir/build.make CMakeFiles/untitled.dir/build
 .PHONY : untitled/fast
 
-ICE_Game.o: ICE_Game.c.o
+ICE_Sources/ICE_Game.o: ICE_Sources/ICE_Game.c.o
 
-.PHONY : ICE_Game.o
-
-# target to build an object file
-ICE_Game.c.o:
-	$(MAKE) -f CMakeFiles/untitled.dir/build.make CMakeFiles/untitled.dir/ICE_Game.c.o
-.PHONY : ICE_Game.c.o
-
-ICE_Game.i: ICE_Game.c.i
-
-.PHONY : ICE_Game.i
-
-# target to preprocess a source file
-ICE_Game.c.i:
-	$(MAKE) -f CMakeFiles/untitled.dir/build.make CMakeFiles/untitled.dir/ICE_Game.c.i
-.PHONY : ICE_Game.c.i
-
-ICE_Game.s: ICE_Game.c.s
-
-.PHONY : ICE_Game.s
-
-# target to generate assembly for a file
-ICE_Game.c.s:
-	$(MAKE) -f CMakeFiles/untitled.dir/build.make CMakeFiles/untitled.dir/ICE_Game.c.s
-.PHONY : ICE_Game.c.s
-
-ICE_Json.o: ICE_Json.c.o
-
-.PHONY : ICE_Json.o
+.PHONY : ICE_Sources/ICE_Game.o
 
 # target to build an object file
-ICE_Json.c.o:
-	$(MAKE) -f CMakeFiles/untitled.dir/build.make CMakeFiles/untitled.dir/ICE_Json.c.o
-.PHONY : ICE_Json.c.o
+ICE_Sources/ICE_Game.c.o:
+	$(MAKE) -f CMakeFiles/untitled.dir/build.make CMakeFiles/untitled.dir/ICE_Sources/ICE_Game.c.o
+.PHONY : ICE_Sources/ICE_Game.c.o
 
-ICE_Json.i: ICE_Json.c.i
+ICE_Sources/ICE_Game.i: ICE_Sources/ICE_Game.c.i
 
-.PHONY : ICE_Json.i
+.PHONY : ICE_Sources/ICE_Game.i
 
 # target to preprocess a source file
-ICE_Json.c.i:
-	$(MAKE) -f CMakeFiles/untitled.dir/build.make CMakeFiles/untitled.dir/ICE_Json.c.i
-.PHONY : ICE_Json.c.i
+ICE_Sources/ICE_Game.c.i:
+	$(MAKE) -f CMakeFiles/untitled.dir/build.make CMakeFiles/untitled.dir/ICE_Sources/ICE_Game.c.i
+.PHONY : ICE_Sources/ICE_Game.c.i
 
-ICE_Json.s: ICE_Json.c.s
+ICE_Sources/ICE_Game.s: ICE_Sources/ICE_Game.c.s
 
-.PHONY : ICE_Json.s
+.PHONY : ICE_Sources/ICE_Game.s
 
 # target to generate assembly for a file
-ICE_Json.c.s:
-	$(MAKE) -f CMakeFiles/untitled.dir/build.make CMakeFiles/untitled.dir/ICE_Json.c.s
-.PHONY : ICE_Json.c.s
+ICE_Sources/ICE_Game.c.s:
+	$(MAKE) -f CMakeFiles/untitled.dir/build.make CMakeFiles/untitled.dir/ICE_Sources/ICE_Game.c.s
+.PHONY : ICE_Sources/ICE_Game.c.s
 
-main.o: main.c.o
+ICE_Sources/ICE_Json.o: ICE_Sources/ICE_Json.c.o
 
-.PHONY : main.o
+.PHONY : ICE_Sources/ICE_Json.o
 
 # target to build an object file
-main.c.o:
-	$(MAKE) -f CMakeFiles/untitled.dir/build.make CMakeFiles/untitled.dir/main.c.o
-.PHONY : main.c.o
+ICE_Sources/ICE_Json.c.o:
+	$(MAKE) -f CMakeFiles/untitled.dir/build.make CMakeFiles/untitled.dir/ICE_Sources/ICE_Json.c.o
+.PHONY : ICE_Sources/ICE_Json.c.o
 
-main.i: main.c.i
+ICE_Sources/ICE_Json.i: ICE_Sources/ICE_Json.c.i
 
-.PHONY : main.i
+.PHONY : ICE_Sources/ICE_Json.i
 
 # target to preprocess a source file
-main.c.i:
-	$(MAKE) -f CMakeFiles/untitled.dir/build.make CMakeFiles/untitled.dir/main.c.i
-.PHONY : main.c.i
+ICE_Sources/ICE_Json.c.i:
+	$(MAKE) -f CMakeFiles/untitled.dir/build.make CMakeFiles/untitled.dir/ICE_Sources/ICE_Json.c.i
+.PHONY : ICE_Sources/ICE_Json.c.i
 
-main.s: main.c.s
+ICE_Sources/ICE_Json.s: ICE_Sources/ICE_Json.c.s
 
-.PHONY : main.s
+.PHONY : ICE_Sources/ICE_Json.s
 
 # target to generate assembly for a file
-main.c.s:
-	$(MAKE) -f CMakeFiles/untitled.dir/build.make CMakeFiles/untitled.dir/main.c.s
-.PHONY : main.c.s
+ICE_Sources/ICE_Json.c.s:
+	$(MAKE) -f CMakeFiles/untitled.dir/build.make CMakeFiles/untitled.dir/ICE_Sources/ICE_Json.c.s
+.PHONY : ICE_Sources/ICE_Json.c.s
+
+ICE_Sources/ICE_Socket.o: ICE_Sources/ICE_Socket.c.o
+
+.PHONY : ICE_Sources/ICE_Socket.o
+
+# target to build an object file
+ICE_Sources/ICE_Socket.c.o:
+	$(MAKE) -f CMakeFiles/untitled.dir/build.make CMakeFiles/untitled.dir/ICE_Sources/ICE_Socket.c.o
+.PHONY : ICE_Sources/ICE_Socket.c.o
+
+ICE_Sources/ICE_Socket.i: ICE_Sources/ICE_Socket.c.i
+
+.PHONY : ICE_Sources/ICE_Socket.i
+
+# target to preprocess a source file
+ICE_Sources/ICE_Socket.c.i:
+	$(MAKE) -f CMakeFiles/untitled.dir/build.make CMakeFiles/untitled.dir/ICE_Sources/ICE_Socket.c.i
+.PHONY : ICE_Sources/ICE_Socket.c.i
+
+ICE_Sources/ICE_Socket.s: ICE_Sources/ICE_Socket.c.s
+
+.PHONY : ICE_Sources/ICE_Socket.s
+
+# target to generate assembly for a file
+ICE_Sources/ICE_Socket.c.s:
+	$(MAKE) -f CMakeFiles/untitled.dir/build.make CMakeFiles/untitled.dir/ICE_Sources/ICE_Socket.c.s
+.PHONY : ICE_Sources/ICE_Socket.c.s
+
+ICE_Sources/main.o: ICE_Sources/main.c.o
+
+.PHONY : ICE_Sources/main.o
+
+# target to build an object file
+ICE_Sources/main.c.o:
+	$(MAKE) -f CMakeFiles/untitled.dir/build.make CMakeFiles/untitled.dir/ICE_Sources/main.c.o
+.PHONY : ICE_Sources/main.c.o
+
+ICE_Sources/main.i: ICE_Sources/main.c.i
+
+.PHONY : ICE_Sources/main.i
+
+# target to preprocess a source file
+ICE_Sources/main.c.i:
+	$(MAKE) -f CMakeFiles/untitled.dir/build.make CMakeFiles/untitled.dir/ICE_Sources/main.c.i
+.PHONY : ICE_Sources/main.c.i
+
+ICE_Sources/main.s: ICE_Sources/main.c.s
+
+.PHONY : ICE_Sources/main.s
+
+# target to generate assembly for a file
+ICE_Sources/main.c.s:
+	$(MAKE) -f CMakeFiles/untitled.dir/build.make CMakeFiles/untitled.dir/ICE_Sources/main.c.s
+.PHONY : ICE_Sources/main.c.s
 
 # Help Target
 help:
@@ -213,15 +240,18 @@ help:
 	@echo "... rebuild_cache"
 	@echo "... untitled"
 	@echo "... edit_cache"
-	@echo "... ICE_Game.o"
-	@echo "... ICE_Game.i"
-	@echo "... ICE_Game.s"
-	@echo "... ICE_Json.o"
-	@echo "... ICE_Json.i"
-	@echo "... ICE_Json.s"
-	@echo "... main.o"
-	@echo "... main.i"
-	@echo "... main.s"
+	@echo "... ICE_Sources/ICE_Game.o"
+	@echo "... ICE_Sources/ICE_Game.i"
+	@echo "... ICE_Sources/ICE_Game.s"
+	@echo "... ICE_Sources/ICE_Json.o"
+	@echo "... ICE_Sources/ICE_Json.i"
+	@echo "... ICE_Sources/ICE_Json.s"
+	@echo "... ICE_Sources/ICE_Socket.o"
+	@echo "... ICE_Sources/ICE_Socket.i"
+	@echo "... ICE_Sources/ICE_Socket.s"
+	@echo "... ICE_Sources/main.o"
+	@echo "... ICE_Sources/main.i"
+	@echo "... ICE_Sources/main.s"
 .PHONY : help
 
 
