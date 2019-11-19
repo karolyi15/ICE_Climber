@@ -17,6 +17,8 @@
 const float FPS=60;//Determines the frames per second in game
 const  int screenW=1000;//Determines window width
 const  int screenH=600;//Determiner window height
+float popoAnimation[2]={0,0};
+float nanaAnimation[2]={0,0};
 //Hold keys values / Determines which keys are able to be recognize
 enum KEYS {
     KEY_UP, KEY_DOWN, KEY_LEFT, KEY_RIGHT, KEY_W, KEY_S, KEY_A, KEY_D
@@ -25,17 +27,28 @@ enum KEYS {
 
 
 //********************************************************
-const  int bouncerSize=32;
+
 //PAYERS VALUES
-float playerVel=4.0;
-float gravity=-9.8;
+float playerMovementSpeed[2]={4.0,7.0};
+float acceleration[2]={0,9.8};
+
 //PLAYER 1 POSITION
-float player1_x = 560;
-float player1_y = 392;                                      //Could change in future
+float  popoPosition[2]={718,506-81};
+
 //PLAYER 2 POSITION
-float player2_x = 48;
-float player2_y = 392;
+float  nanaPosition[2]={250,506-81};
+
+bool jump=false;
 //********************************************************
+
+bool Collision(float x, float y, float ex, float ey,int width, int height){
+
+
+    if(x+width < ex || x > ex+width || y+height < ey || y > ey+height){
+        return false;
+    }
+    return true;
+}
 
 
 
@@ -50,8 +63,9 @@ int startGame() {
     ALLEGRO_SAMPLE *jumpSound=NULL;
     ALLEGRO_SAMPLE *fieldSound=NULL;
     ALLEGRO_BITMAP *background=NULL;
-    ALLEGRO_BITMAP *bouncer=NULL;
-    ALLEGRO_BITMAP *bouncer2=NULL;
+    ALLEGRO_BITMAP *popoMove=NULL;
+    ALLEGRO_BITMAP *nanaMove=NULL;
+    ALLEGRO_BITMAP *bouncer3=NULL;
     bool key[8] = { false, false, false, false, false, false, false, false };
     bool redraw=true;
     bool exit=false;
@@ -118,8 +132,10 @@ int startGame() {
     }
 
     //LOAD IMAGE FILES
+    popoMove=al_load_bitmap("/home/gunther/CLionProjects/ICE_Client/_imgs/Popo.png");
+    nanaMove=al_load_bitmap("/home/gunther/CLionProjects/ICE_Client/_imgs/Nana.png");
     background = al_load_bitmap("/home/gunther/CLionProjects/ICE_Client/_imgs/Backgrounds.png");
-    if(!background) {
+    if(!popoMove || !nanaMove || !background) {
         al_show_native_message_box(display, "Error", "Error", "Failed to load image file",
                                    NULL, ALLEGRO_MESSAGEBOX_ERROR);
 
@@ -127,6 +143,9 @@ int startGame() {
         al_destroy_display(display);
         return 0;
     }
+    //MASK BLACK COLOR FROM IMAGES
+    al_convert_mask_to_alpha(popoMove,al_map_rgb(0,0,0));
+    al_convert_mask_to_alpha(nanaMove,al_map_rgb(0,0,0));
 
     //LOADING AUDIO FILES
     titleMusic = al_load_sample("/home/gunther/CLionProjects/ICE_Client/_sounds/_TitleScreen.wav" );
@@ -142,9 +161,8 @@ int startGame() {
     }
 
     //CREATE BITMAP
-    bouncer=al_create_bitmap(bouncerSize,bouncerSize);
-    bouncer2=al_create_bitmap(bouncerSize,bouncerSize);
-    if(!bouncer || !bouncer2){
+    bouncer3=al_create_bitmap(1000,20);
+    if(!bouncer3){
         al_show_native_message_box(display, "Error", "Error", "Fail to create bitmap",
                                    NULL, ALLEGRO_MESSAGEBOX_ERROR);
         al_destroy_bitmap(background);
@@ -153,18 +171,13 @@ int startGame() {
         al_destroy_sample(jumpSound);
         al_destroy_sample(fieldSound);
         al_destroy_display(display);
-        //al_destroy_bitmap(image);
         return 0;
     }
 
     //DRAWING BITMAPS
 
-    al_set_target_bitmap(bouncer);
-    al_clear_to_color(al_map_rgb(100, 0, 255));
-    al_set_target_bitmap(al_get_backbuffer(display));
-
-    al_set_target_bitmap(bouncer2);
-    al_clear_to_color(al_map_rgb(255, 0, 100));
+    al_set_target_bitmap(bouncer3);
+    al_clear_to_color(al_map_rgb(0, 255, 0));
     al_set_target_bitmap(al_get_backbuffer(display));
 
 
@@ -176,6 +189,9 @@ int startGame() {
         al_destroy_display(display);
         al_destroy_timer(timer);
         al_destroy_sample(titleMusic);
+        al_destroy_bitmap(bouncer3);
+        al_destroy_bitmap(nanaMove);
+        al_destroy_bitmap(popoMove);
         al_destroy_sample(jumpSound);
         al_destroy_sample(fieldSound);
         al_destroy_bitmap(background);
@@ -195,6 +211,10 @@ int startGame() {
 
     //gain=volume-pan=side of sound
     al_play_sample(titleMusic, 0.5, 0.0,1.0,ALLEGRO_PLAYMODE_LOOP,NULL);
+
+
+
+
     //GAME LOOP
     while(!exit){
         ALLEGRO_EVENT event;
@@ -204,31 +224,87 @@ int startGame() {
         if(event.type==ALLEGRO_EVENT_TIMER) {
 
             //SET SCREEN LIMITS TO BOUNCER
-            if (key[KEY_UP] && player1_y >= 4.0) {
-                player1_y -= playerVel;
+            if (key[KEY_UP] && popoPosition[0] >= 4.0 ) {
+
+                popoPosition[1]-= playerMovementSpeed[1];
+                //key[KEY_UP] = false;
             }
-            if (key[KEY_DOWN] && player1_y <= screenH - bouncerSize - 4.0) {
+            if(!key[KEY_UP] && popoPosition[1] < 506-32){
+                popoPosition[1]+=acceleration[1];
+            }
+            if (key[KEY_DOWN] &&popoPosition[1] <= screenH - 81 - 4.0-94) {
                 //player1_y += 4.0;
             }
-            if (key[KEY_LEFT] && player1_x >= 4.0) {
-                player1_x -= playerVel;
+            if (key[KEY_LEFT]) {
+
+                popoAnimation[0]+=al_get_bitmap_width(popoMove)/5;
+                popoAnimation[1]=0;
+
+                if (popoAnimation[0]>(al_get_bitmap_width(popoMove)/5)*4){
+                    popoAnimation[0]=0;
+                }
+
+                if (popoPosition[0]<-32){
+                    popoPosition[0]=1000;
+                }else {
+                    popoPosition[0]-= playerMovementSpeed[0];
+                }
             }
-            if (key[KEY_RIGHT] && player1_x <= screenW - bouncerSize - 4.0) {
-                player1_x += playerVel;
+            if (key[KEY_RIGHT]) {
+
+                popoAnimation[0]+=al_get_bitmap_width(popoMove)/5;
+                popoAnimation[1]=al_get_bitmap_height(popoMove)/2;
+
+                if (popoAnimation[0]>(al_get_bitmap_width(popoMove)/5)*4){
+                    popoAnimation[0]=0;
+                }
+                if (popoPosition[0]>1000){
+                    popoPosition[0]=0;
+                }else {
+                    popoPosition[0] += playerMovementSpeed[0];
+                }
             }
 
 
-            if (key[KEY_W] && player2_y >= 4.0) {
-                player2_y -= playerVel;
+            if (key[KEY_W] && nanaPosition[1] >= 4.0) {
+                nanaPosition[1]-= playerMovementSpeed[1];
             }
-            if (key[KEY_S] && player2_y <= screenH - bouncerSize - 4.0) {
+            if(!key[KEY_W] && nanaPosition[1]<506-32){
+                nanaPosition[1]+=acceleration[1];
+            }
+            if (key[KEY_S] && nanaPosition[1] <= screenH - 81 - 4.0-94) {
                 //player2_y += 4.0;
             }
-            if (key[KEY_A] && player2_x >= 4.0) {
-                player2_x -= playerVel;
+            if (key[KEY_A]) {
+
+                nanaAnimation[0]+=al_get_bitmap_width(nanaMove)/5;
+                nanaAnimation[1]=0;
+
+                if (nanaAnimation[0]>(al_get_bitmap_width(nanaMove)/5)*4){
+                    nanaAnimation[0]=0;
+                }
+
+
+                if (nanaPosition[0]<-32){
+                    nanaPosition[0]=1000;
+                }else {
+                    nanaPosition[0]-= playerMovementSpeed[0];
+                }
             }
-            if (key[KEY_D] && player2_x <= screenW - bouncerSize - 4.0) {
-                player2_x += playerVel;
+            if (key[KEY_D]) {
+
+                nanaAnimation[0]+=al_get_bitmap_width(nanaMove)/5;
+                nanaAnimation[1]=al_get_bitmap_height(nanaMove)/2;
+
+                if (nanaAnimation[0]>(al_get_bitmap_width(nanaMove)/5)*4){
+                    nanaAnimation[0]=0;
+                }
+
+                if (nanaPosition[0]>1000){
+                    nanaPosition[0]=0;
+                }else {
+                    nanaPosition[0] += playerMovementSpeed[0];
+                }
             }
 
             //initClient(jsonWriter(1,player1_x, player1_y, 0, 3));
@@ -322,9 +398,11 @@ int startGame() {
         if(redraw && al_is_event_queue_empty(eventQueue)){
             redraw=false;
             al_clear_to_color(al_map_rgb(0,0,0));
+            //al_draw_bitmap(bouncer3, 0, 506, 0);
             al_draw_bitmap_region(background,0,0,1000,3450,0,-2850,0);
-            al_draw_bitmap(bouncer, player1_x, player1_y, 0);
-            al_draw_bitmap(bouncer2, player2_x, player2_y, 0);
+            al_draw_bitmap_region(popoMove, popoAnimation[0], popoAnimation[1], al_get_bitmap_width(popoMove)/5,al_get_bitmap_height(popoMove)/2,popoPosition[0],popoPosition[1]-60,0);
+            al_draw_bitmap_region(nanaMove, nanaAnimation[0], nanaAnimation[1], al_get_bitmap_width(nanaMove)/5,al_get_bitmap_height(nanaMove)/2,nanaPosition[0],nanaPosition[1]-60,0);
+            //al_draw_bitmap(bouncer3, 0, 506, 0);
             al_flip_display();
         }
 
@@ -335,11 +413,17 @@ int startGame() {
     al_destroy_sample(titleMusic);
     al_destroy_sample(jumpSound);
     al_destroy_sample(fieldSound);
-    al_destroy_bitmap(bouncer);
-    al_destroy_bitmap(bouncer2);
+    al_destroy_bitmap(popoMove);
+    al_destroy_bitmap(nanaMove);
+    al_destroy_bitmap(bouncer3);
     al_destroy_timer(timer);
     al_destroy_display(display);
     al_destroy_event_queue(eventQueue);
 
     return 0;
 }
+
+
+
+
+
