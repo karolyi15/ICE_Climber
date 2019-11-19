@@ -19,6 +19,7 @@ const  int screenW=1000;//Determines window width
 const  int screenH=600;//Determiner window height
 float popoAnimation[2]={0,0};
 float nanaAnimation[2]={0,0};
+float dinoAnimation[2]={0,0};
 //Hold keys values / Determines which keys are able to be recognize
 enum KEYS {
     KEY_UP, KEY_DOWN, KEY_LEFT, KEY_RIGHT, KEY_W, KEY_S, KEY_A, KEY_D
@@ -37,7 +38,11 @@ float  popoPosition[2]={718,506-81};
 float  nanaPosition[2]={250,506-81};
 //CAMARA POSITION
 float camaraPosition[2]={0,-2850};
+//ENEMY POSITION
+float dinoPosition[2]={0,400};
 
+
+int dir=1;//1=derecha
 bool jump=false;
 //********************************************************
 
@@ -50,6 +55,38 @@ bool Collision(float x, float y, float ex, float ey,int width, int height){
     return true;
 }
 
+void moveEnemy(ALLEGRO_BITMAP *dino){
+
+    dinoAnimation[0]+=al_get_bitmap_width(dino)/3;
+    if(dinoAnimation[0]>al_get_bitmap_width(dino)){
+        dinoAnimation[0]=0;
+    }
+    if(dir==0 ){
+        dinoAnimation[1]=0;
+        if(dinoPosition[0]>=4.0){
+            dinoPosition[0]-=3;
+        }else{
+            dir=1;
+        }
+
+    }
+    if (dir==1 ){
+        dinoAnimation[1]=al_get_bitmap_height(dino)/2;
+        if(dinoPosition[0]<=(996-al_get_bitmap_width(dino)/3)){
+            dinoPosition[0]+=3;
+        }else{
+
+            dir=0;
+        }
+
+    }
+
+
+
+
+}
+
+//SCROLLING BACKGROUND
 void refreshCamara(){
     if (popoPosition[1]<=200 || nanaPosition[1]<=200){
         camaraPosition[1]+=20;
@@ -75,6 +112,7 @@ int startGame() {
     ALLEGRO_BITMAP *background=NULL;
     ALLEGRO_BITMAP *popoMove=NULL;
     ALLEGRO_BITMAP *nanaMove=NULL;
+    ALLEGRO_BITMAP *dino=NULL;
     ALLEGRO_BITMAP *bouncer3=NULL;
     bool key[8] = { false, false, false, false, false, false, false, false };
     bool redraw=true;
@@ -145,7 +183,8 @@ int startGame() {
     popoMove=al_load_bitmap("/home/gunther/CLionProjects/ICE_Client/_imgs/Popo.png");
     nanaMove=al_load_bitmap("/home/gunther/CLionProjects/ICE_Client/_imgs/Nana.png");
     background = al_load_bitmap("/home/gunther/CLionProjects/ICE_Client/_imgs/Backgrounds.png");
-    if(!popoMove || !nanaMove || !background) {
+    dino=al_load_bitmap("/home/gunther/CLionProjects/ICE_Client/_imgs/Dino.png");
+    if(!popoMove || !nanaMove || !background || !dino) {
         al_show_native_message_box(display, "Error", "Error", "Failed to load image file",
                                    NULL, ALLEGRO_MESSAGEBOX_ERROR);
 
@@ -156,6 +195,7 @@ int startGame() {
     //MASK BLACK COLOR FROM IMAGES
     al_convert_mask_to_alpha(popoMove,al_map_rgb(0,0,0));
     al_convert_mask_to_alpha(nanaMove,al_map_rgb(0,0,0));
+    al_convert_mask_to_alpha(dino,al_map_rgb(0,0,0));
 
     //LOADING AUDIO FILES
     titleMusic = al_load_sample("/home/gunther/CLionProjects/ICE_Client/_sounds/_TitleScreen.wav" );
@@ -167,6 +207,10 @@ int startGame() {
         al_destroy_display(display);
         al_destroy_timer(timer);
         al_destroy_bitmap(background);
+        al_destroy_bitmap(dino);
+        al_destroy_bitmap(nanaMove);
+        al_destroy_bitmap(popoMove);
+
         return 0;
     }
 
@@ -181,6 +225,9 @@ int startGame() {
         al_destroy_sample(jumpSound);
         al_destroy_sample(fieldSound);
         al_destroy_display(display);
+        al_destroy_bitmap(dino);
+        al_destroy_bitmap(nanaMove);
+        al_destroy_bitmap(popoMove);
         return 0;
     }
 
@@ -205,6 +252,7 @@ int startGame() {
         al_destroy_sample(jumpSound);
         al_destroy_sample(fieldSound);
         al_destroy_bitmap(background);
+        al_destroy_bitmap(dino);
         return 0;
     }
 
@@ -234,9 +282,10 @@ int startGame() {
         if(event.type==ALLEGRO_EVENT_TIMER) {
 
             //SET SCREEN LIMITS TO BOUNCER
-            if (key[KEY_UP] && popoPosition[0] >= 4.0 ) {
+            if (key[KEY_UP] && popoPosition[1] >= 4.0 ) {
 
-                popoPosition[1]-= playerMovementSpeed[1];
+                popoPosition[1] -= playerMovementSpeed[1];
+                
                 //key[KEY_UP] = false;
             }
             if(!key[KEY_UP] && popoPosition[1] < 506-32){
@@ -318,6 +367,7 @@ int startGame() {
             }
 
             //initClient(jsonWriter(1,player1_x, player1_y, 0, 3));
+            moveEnemy(dino);
             refreshCamara();
             redraw = true;
         }
@@ -413,6 +463,7 @@ int startGame() {
             al_draw_bitmap_region(background,0,0,1000,3450,camaraPosition[0],camaraPosition[1],0);
             al_draw_bitmap_region(popoMove, popoAnimation[0], popoAnimation[1], al_get_bitmap_width(popoMove)/5,al_get_bitmap_height(popoMove)/2,popoPosition[0],popoPosition[1]-60,0);
             al_draw_bitmap_region(nanaMove, nanaAnimation[0], nanaAnimation[1], al_get_bitmap_width(nanaMove)/5,al_get_bitmap_height(nanaMove)/2,nanaPosition[0],nanaPosition[1]-60,0);
+            al_draw_bitmap_region(dino, dinoAnimation[0], dinoAnimation[1], al_get_bitmap_width(dino)/3,al_get_bitmap_height(dino)/2,dinoPosition[0],dinoPosition[1],0);
             //al_draw_bitmap(bouncer3, 0, 506, 0);
             al_flip_display();
         }
@@ -427,6 +478,7 @@ int startGame() {
     al_destroy_bitmap(popoMove);
     al_destroy_bitmap(nanaMove);
     al_destroy_bitmap(bouncer3);
+    al_destroy_bitmap(dino);
     al_destroy_timer(timer);
     al_destroy_display(display);
     al_destroy_event_queue(eventQueue);
