@@ -31,12 +31,12 @@ enum KEYS {
 //PAYERS VALUES
 float playerMovementSpeed[2]={4.0,7.0};
 float acceleration[2]={0,9.8};
-
 //PLAYER 1 POSITION
 float  popoPosition[2]={718,506-81};
-
 //PLAYER 2 POSITION
 float  nanaPosition[2]={250,506-81};
+//CAMARA POSITION
+float camaraPosition[2]={0,-2850};
 
 bool jump=false;
 //********************************************************
@@ -48,6 +48,16 @@ bool Collision(float x, float y, float ex, float ey,int width, int height){
         return false;
     }
     return true;
+}
+
+void refreshCamara(){
+    if (popoPosition[1]<=200 || nanaPosition[1]<=200){
+        camaraPosition[1]+=20;
+    }
+
+    if(camaraPosition[1]>=0){
+        camaraPosition[1]=0;
+    }
 }
 
 
@@ -69,7 +79,7 @@ int startGame() {
     bool key[8] = { false, false, false, false, false, false, false, false };
     bool redraw=true;
     bool exit=false;
-    float camaraPosition[2]={0,0};
+
 
     //INIT ALLEGRO LIBRARY
     if(!al_init()){
@@ -240,7 +250,7 @@ int startGame() {
                 popoAnimation[0]+=al_get_bitmap_width(popoMove)/5;
                 popoAnimation[1]=0;
 
-                if (popoAnimation[0]>(al_get_bitmap_width(popoMove)/5)*4){
+                if (popoAnimation[0]>(al_get_bitmap_width(popoMove)/5)*3){
                     popoAnimation[0]=0;
                 }
 
@@ -255,7 +265,7 @@ int startGame() {
                 popoAnimation[0]+=al_get_bitmap_width(popoMove)/5;
                 popoAnimation[1]=al_get_bitmap_height(popoMove)/2;
 
-                if (popoAnimation[0]>(al_get_bitmap_width(popoMove)/5)*4){
+                if (popoAnimation[0]>(al_get_bitmap_width(popoMove)/5)*3){
                     popoAnimation[0]=0;
                 }
                 if (popoPosition[0]>1000){
@@ -280,7 +290,7 @@ int startGame() {
                 nanaAnimation[0]+=al_get_bitmap_width(nanaMove)/5;
                 nanaAnimation[1]=0;
 
-                if (nanaAnimation[0]>(al_get_bitmap_width(nanaMove)/5)*4){
+                if (nanaAnimation[0]>(al_get_bitmap_width(nanaMove)/5)*3){
                     nanaAnimation[0]=0;
                 }
 
@@ -296,7 +306,7 @@ int startGame() {
                 nanaAnimation[0]+=al_get_bitmap_width(nanaMove)/5;
                 nanaAnimation[1]=al_get_bitmap_height(nanaMove)/2;
 
-                if (nanaAnimation[0]>(al_get_bitmap_width(nanaMove)/5)*4){
+                if (nanaAnimation[0]>(al_get_bitmap_width(nanaMove)/5)*3){
                     nanaAnimation[0]=0;
                 }
 
@@ -308,6 +318,7 @@ int startGame() {
             }
 
             //initClient(jsonWriter(1,player1_x, player1_y, 0, 3));
+            refreshCamara();
             redraw = true;
         }
         else if(event.type == ALLEGRO_EVENT_DISPLAY_CLOSE) {
@@ -399,7 +410,7 @@ int startGame() {
             redraw=false;
             al_clear_to_color(al_map_rgb(0,0,0));
             //al_draw_bitmap(bouncer3, 0, 506, 0);
-            al_draw_bitmap_region(background,0,0,1000,3450,0,-2850,0);
+            al_draw_bitmap_region(background,0,0,1000,3450,camaraPosition[0],camaraPosition[1],0);
             al_draw_bitmap_region(popoMove, popoAnimation[0], popoAnimation[1], al_get_bitmap_width(popoMove)/5,al_get_bitmap_height(popoMove)/2,popoPosition[0],popoPosition[1]-60,0);
             al_draw_bitmap_region(nanaMove, nanaAnimation[0], nanaAnimation[1], al_get_bitmap_width(nanaMove)/5,al_get_bitmap_height(nanaMove)/2,nanaPosition[0],nanaPosition[1]-60,0);
             //al_draw_bitmap(bouncer3, 0, 506, 0);
