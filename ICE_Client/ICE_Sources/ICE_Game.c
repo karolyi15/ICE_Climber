@@ -15,6 +15,7 @@
 
 //Global Fields
 const float FPS=60;//Determines the frames per second in game
+const float AnimationFPS=10.0;
 const  int screenW=1000;//Determines window width
 const  int screenH=600;//Determiner window height
 float popoAnimation[2]={0,0};
@@ -39,7 +40,7 @@ float  nanaPosition[2]={250,506-81};
 //CAMARA POSITION
 float camaraPosition[2]={0,-2850};
 //ENEMY POSITION
-float dinoPosition[2]={0,400};
+float dinoPosition[2]={125,506};
 
 
 int dir=1;//1=derecha
@@ -58,22 +59,22 @@ bool Collision(float x, float y, float ex, float ey,int width, int height){
 void moveEnemy(ALLEGRO_BITMAP *dino){
 
     dinoAnimation[0]+=al_get_bitmap_width(dino)/3;
-    if(dinoAnimation[0]>al_get_bitmap_width(dino)){
+    if(dinoAnimation[0]>=al_get_bitmap_width(dino)){
         dinoAnimation[0]=0;
     }
     if(dir==0 ){
         dinoAnimation[1]=0;
         if(dinoPosition[0]>=4.0){
-            dinoPosition[0]-=3;
+            dinoPosition[0]-=25;
         }else{
             dir=1;
         }
 
     }
     if (dir==1 ){
-        dinoAnimation[1]=al_get_bitmap_height(dino)/2;
+        dinoAnimation[1]=(al_get_bitmap_height(dino)/2);
         if(dinoPosition[0]<=(996-al_get_bitmap_width(dino)/3)){
-            dinoPosition[0]+=3;
+            dinoPosition[0]+=25;
         }else{
 
             dir=0;
@@ -106,6 +107,7 @@ int startGame() {
     ALLEGRO_DISPLAY *display=NULL;
     ALLEGRO_EVENT_QUEUE *eventQueue=NULL;
     ALLEGRO_TIMER *timer=NULL;
+    ALLEGRO_TIMER *frameTimer=NULL;
     ALLEGRO_SAMPLE *titleMusic=NULL;
     ALLEGRO_SAMPLE *jumpSound=NULL;
     ALLEGRO_SAMPLE *fieldSound=NULL;
@@ -142,7 +144,8 @@ int startGame() {
 
     //CREATE TIMER
     timer = al_create_timer(1.0 / FPS);
-    if(!timer){
+    frameTimer = al_create_timer(1.0 / AnimationFPS);
+    if(!timer || !frameTimer){
         al_show_native_message_box(display, "Error", "Error", "Fail to create timer",
                                    NULL, ALLEGRO_MESSAGEBOX_ERROR);
         return 0;
@@ -209,6 +212,7 @@ int startGame() {
         al_destroy_bitmap(background);
         al_destroy_bitmap(dino);
         al_destroy_bitmap(nanaMove);
+        al_destroy_timer(frameTimer);
         al_destroy_bitmap(popoMove);
 
         return 0;
@@ -224,6 +228,7 @@ int startGame() {
         al_destroy_sample(titleMusic);
         al_destroy_sample(jumpSound);
         al_destroy_sample(fieldSound);
+        al_destroy_timer(frameTimer);
         al_destroy_display(display);
         al_destroy_bitmap(dino);
         al_destroy_bitmap(nanaMove);
@@ -245,6 +250,7 @@ int startGame() {
                                    NULL, ALLEGRO_MESSAGEBOX_ERROR);
         al_destroy_display(display);
         al_destroy_timer(timer);
+        al_destroy_timer(frameTimer);
         al_destroy_sample(titleMusic);
         al_destroy_bitmap(bouncer3);
         al_destroy_bitmap(nanaMove);
@@ -259,6 +265,7 @@ int startGame() {
     //REGISTER EVENTS TO EVENT QUEUE (LINK THEM)
     al_register_event_source(eventQueue, al_get_display_event_source(display));
     al_register_event_source(eventQueue, al_get_timer_event_source(timer));
+    al_register_event_source(eventQueue, al_get_timer_event_source(frameTimer));
     al_register_event_source(eventQueue, al_get_keyboard_event_source());
     al_clear_to_color(al_map_rgb(0,0,0));
 
@@ -266,6 +273,7 @@ int startGame() {
     al_flip_display();
     //START TIMER
     al_start_timer(timer);
+    al_start_timer(frameTimer);
 
     //gain=volume-pan=side of sound
     al_play_sample(titleMusic, 0.5, 0.0,1.0,ALLEGRO_PLAYMODE_LOOP,NULL);
@@ -295,9 +303,10 @@ int startGame() {
                 //player1_y += 4.0;
             }
             if (key[KEY_LEFT]) {
-
-                popoAnimation[0]+=al_get_bitmap_width(popoMove)/5;
-                popoAnimation[1]=0;
+                if(event.timer.source ==frameTimer) {
+                    popoAnimation[0] += al_get_bitmap_width(popoMove) / 5;
+                    popoAnimation[1] = 0;
+                }
 
                 if (popoAnimation[0]>(al_get_bitmap_width(popoMove)/5)*3){
                     popoAnimation[0]=0;
@@ -310,9 +319,10 @@ int startGame() {
                 }
             }
             if (key[KEY_RIGHT]) {
-
-                popoAnimation[0]+=al_get_bitmap_width(popoMove)/5;
-                popoAnimation[1]=al_get_bitmap_height(popoMove)/2;
+                if(event.timer.source ==frameTimer) {
+                    popoAnimation[0] += al_get_bitmap_width(popoMove) / 5;
+                    popoAnimation[1] = al_get_bitmap_height(popoMove) / 2;
+                }
 
                 if (popoAnimation[0]>(al_get_bitmap_width(popoMove)/5)*3){
                     popoAnimation[0]=0;
@@ -367,7 +377,9 @@ int startGame() {
             }
 
             //initClient(jsonWriter(1,player1_x, player1_y, 0, 3));
-            moveEnemy(dino);
+            if(event.timer.source ==frameTimer) {
+                moveEnemy(dino);
+            }
             refreshCamara();
             redraw = true;
         }
@@ -478,6 +490,7 @@ int startGame() {
     al_destroy_bitmap(popoMove);
     al_destroy_bitmap(nanaMove);
     al_destroy_bitmap(bouncer3);
+    al_destroy_timer(frameTimer);
     al_destroy_bitmap(dino);
     al_destroy_timer(timer);
     al_destroy_display(display);
