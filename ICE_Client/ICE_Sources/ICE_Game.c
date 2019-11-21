@@ -62,8 +62,8 @@ float camaraPosition[2]={0,-2850};
 //********************* CAMARA *********************//
 
 void refreshCamara(){
-    if (popoPosition[1]<=200 || nanaPosition[1]<=200 || dinoPosition[1]<=200){
-        camaraPosition[1]+=20;
+    if (popoPosition[1]<=200 || nanaPosition[1]<=200 || dinoPosition[1]<=300 & dinoPosition[1]>200){
+        camaraPosition[1]+=6.5;
     }
 
     if(camaraPosition[1]>=0){
@@ -668,6 +668,155 @@ int enemySelectionScene(ALLEGRO_DISPLAY *display){
 
 }
 
+//*************** GAME LEVEL INTRO ******************//
+
+int levelIntro(ALLEGRO_DISPLAY *display) {
+
+    ALLEGRO_EVENT_QUEUE *eventQueue = NULL;
+
+    ALLEGRO_TIMER *timer = NULL;
+    ALLEGRO_TIMER *frameTimer = NULL;
+
+    ALLEGRO_SAMPLE *introMusic = NULL;
+
+    ALLEGRO_BITMAP *background = NULL;
+    ALLEGRO_BITMAP *dino = NULL;
+
+    bool running = true;
+    bool redraw = true;
+
+    //CREATE TIMER
+    timer = al_create_timer(1.0 / FPS);
+    frameTimer = al_create_timer(1.0 / AnimationFPS);
+    if (!timer || !frameTimer) {
+        al_show_native_message_box(display, "Error", "Error", "Fail to create timer", NULL, ALLEGRO_MESSAGEBOX_ERROR);
+        return 0;
+    }
+
+    background = al_load_bitmap("/home/gunther/CLionProjects/ICE_Client/_imgs/Backgrounds.png");
+    dino = al_load_bitmap("/home/gunther/CLionProjects/ICE_Client/_imgs/Dino.png");
+    if (!background || !dino) {
+        al_show_native_message_box(display, "Error", "Error", "Failed to load image file",
+                                   NULL, ALLEGRO_MESSAGEBOX_ERROR);
+
+        al_destroy_timer(timer);
+        al_destroy_timer(frameTimer);
+        al_destroy_display(display);
+        return 0;
+    }
+
+    al_convert_mask_to_alpha(dino, al_map_rgb(0, 0, 0));
+
+    //LOADING AUDIO FILES
+    introMusic = al_load_sample("/home/gunther/CLionProjects/ICE_Client/_sounds/IntroMusic.wav");
+    if (!introMusic) {
+        al_show_native_message_box(display, "Error", "Error", "Failed to load audio clip", NULL,
+                                   ALLEGRO_MESSAGEBOX_ERROR);
+
+        al_destroy_timer(timer);
+        al_destroy_timer(frameTimer);
+        al_destroy_bitmap(background);
+        al_destroy_bitmap(dino);
+        al_destroy_display(display);
+        return 0;
+    }
+
+    //CREATE AND MANAGE EVENT QUEUE
+    eventQueue = al_create_event_queue();
+    if (!eventQueue) {
+        al_show_native_message_box(display, "Error", "Error", "Fail to create Event Queue",
+                                   NULL, ALLEGRO_MESSAGEBOX_ERROR);
+        al_destroy_timer(timer);
+        al_destroy_timer(frameTimer);
+        al_destroy_bitmap(background);
+        al_destroy_bitmap(dino);
+        al_destroy_sample(introMusic);
+        al_destroy_display(display);
+
+        return 0;
+    }
+
+    //REGISTER EVENTS TO EVENT QUEUE (LINK THEM)
+    al_register_event_source(eventQueue, al_get_display_event_source(display));
+    al_register_event_source(eventQueue, al_get_timer_event_source(timer));
+    al_register_event_source(eventQueue, al_get_timer_event_source(frameTimer));
+
+
+    al_clear_to_color(al_map_rgb(0, 0, 0));
+
+    //FLIP IMAGE BUFFERED
+    al_flip_display();
+
+    //START TIMER
+    al_start_timer(timer);
+    al_start_timer(frameTimer);
+
+
+    //gain=volume-pan=side of sound
+    al_play_sample(introMusic, 0.5, 0.0, 1.0, ALLEGRO_PLAYMODE_LOOP, NULL);
+
+    while (running) {
+
+        ALLEGRO_EVENT event;
+        al_wait_for_event(eventQueue, &event);
+
+
+        if (event.type == ALLEGRO_EVENT_TIMER) {
+
+            if(event.timer.source==timer){
+
+                if(dinoPosition[1]>=300) {
+                    dinoPosition[1] -= 20;
+                }
+                else if (camaraPosition[1]==0){
+                    al_rest(0.5);
+                    dinoPosition[1]=506;
+                    break;
+                }
+            }
+
+            if (event.timer.source == frameTimer) {
+                dinoAnimation[0]+=al_get_bitmap_width(dino)/3;
+                if(dinoAnimation[0]>=al_get_bitmap_width(dino)){
+                    dinoAnimation[0]=0;
+                }
+            }
+
+            refreshCamara();
+            redraw = true;
+
+
+        }
+
+
+        if (redraw && al_is_event_queue_empty(eventQueue)) {
+
+            redraw = false;
+            al_clear_to_color(al_map_rgb(0, 0, 0));
+
+            al_draw_bitmap_region(background, 0, 0, 1000, 3450, camaraPosition[0], camaraPosition[1], 0);
+            al_draw_bitmap_region(dino, dinoAnimation[0], dinoAnimation[1], al_get_bitmap_width(dino) / 3,al_get_bitmap_height(dino) / 2, 500-(al_get_bitmap_width(dino)/3)/2, dinoPosition[1], 0);
+
+
+            al_flip_display();
+
+
+        }
+
+    }
+
+    //FREE MEMORY
+    al_destroy_timer(timer);
+    al_destroy_timer(frameTimer);
+    al_destroy_bitmap(background);
+    al_destroy_bitmap(dino);
+    al_destroy_sample(introMusic);
+    al_destroy_event_queue(eventQueue);
+
+    return 0;
+
+}
+
 //*************** GAME LEVEL 1 SCENE ***************//
 
 int level1(ALLEGRO_DISPLAY *display){
@@ -724,7 +873,7 @@ int level1(ALLEGRO_DISPLAY *display){
     al_convert_mask_to_alpha(dino,al_map_rgb(0,0,0));
 
     //LOADING AUDIO FILES
-    titleMusic = al_load_sample("/home/gunther/CLionProjects/ICE_Client/_sounds/_Stage Theme.wav" );
+    titleMusic = al_load_sample("/home/gunther/CLionProjects/ICE_Client/_sounds/LevelMusic.wav" );
     jumpSound = al_load_sample("/home/gunther/CLionProjects/ICE_Client/_sounds/Jump.wav" );
     fieldSound = al_load_sample("/home/gunther/CLionProjects/ICE_Client/_sounds/DestroyField.wav" );
     if (!titleMusic || !jumpSound || !fieldSound) {
@@ -1091,7 +1240,7 @@ int startGame(int players) {
     }
 
     //RESERVE A NUMBER OF AUDIO SAMPLES, AND CREATES A DEFAULT MIXER
-    if (!al_reserve_samples(3)){
+    if (!al_reserve_samples(5)){
         al_show_native_message_box(display, "Error", "Error", "Failed to reserve samples",
                                    NULL, ALLEGRO_MESSAGEBOX_ERROR);
         return 0;
@@ -1120,6 +1269,8 @@ int startGame(int players) {
             enemySelectionScene(display);
         }
         else if(currentScene==3){
+            levelIntro(display);
+            restartCamara();
             level1(display);
         }
         else{
