@@ -640,7 +640,7 @@ int enemySelectionScene(ALLEGRO_DISPLAY *display){
             //SECOND ROW OF ENEMIES
             al_draw_bitmap_region(Foca,0,0,al_get_bitmap_width(Foca)/3,al_get_bitmap_height(Foca)/3,322,315,0);
             al_draw_rectangle(300,300,300+rectangleW,300+rectangleH,focaColor,10);
-            al_draw_bitmap_region(Pajaro,0,0,al_get_bitmap_width(Pajaro)/2,al_get_bitmap_height(Pajaro)/3,610,325,0);
+            al_draw_bitmap_region(Pajaro,0,0,al_get_bitmap_width(Pajaro)/2,al_get_bitmap_height(Pajaro)/3,625,325,0);
             al_draw_rectangle(600,300,600+rectangleW,300+rectangleH,pajaroColor,10);
 
             al_draw_bitmap(titleText,500-al_get_bitmap_width(titleText)/2,40,0);
