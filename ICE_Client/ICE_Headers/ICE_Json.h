@@ -5,7 +5,7 @@
 #ifndef UNTITLED_ICE_JSON_H
 #define UNTITLED_ICE_JSON_H
 
-void jsonParser(char jsonString[]);
+struct json_object * jsonParser(char jsonString[]);
 
 
 

@@ -8,7 +8,7 @@
 //jsonParser function reads take a char array as argument
 //it reads and convert it to a Json Object
 
-void jsonParser(char jsonString[]) {
+ struct json_object * jsonParser(char jsonString[]) {
 
     //INIT STRUCTS TO SAVE JSON DATA
     struct json_object *parsed_json;
@@ -26,11 +26,7 @@ void jsonParser(char jsonString[]) {
     json_object_object_get_ex(parsed_json,"score",&score);
     json_object_object_get_ex(parsed_json,"lives",&lives);
 
-    //PRINTING RESULTS
-    //player1_x=json_object_get_int(posX);
-    //player1_y=json_object_get_int(posY);
-    //printf("score = %i\n",json_object_get_int(score));
-    //printf("lives = %i\n",json_object_get_int(lives));
+    return parsed_json;
 
 }
 
