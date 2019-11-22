@@ -29,6 +29,8 @@ float movementSpeed[2]={4.0, 7.0};//CHARACTERS MOVEMENT SPEED
 float acceleration[2]={0,9.8};//CHARACTER MOVEMENT ACCELERATION
 
 int currentScene=0;//Determines WHICH SCENE THE USER IS GONNA SEE
+int gameMode;
+int playerID;
 
 //******************** PLAYERS *********************//
 
@@ -62,7 +64,7 @@ float camaraPosition[2]={0,-2850};
 //********************* CAMARA *********************//
 
 void refreshCamara(){
-    if (popoPosition[1]<=200 || nanaPosition[1]<=200 || dinoPosition[1]<=300 & dinoPosition[1]>200){
+    if (popoPosition[1]<=300 || nanaPosition[1]<=300 || dinoPosition[1]<=300 & dinoPosition[1]>200){
         camaraPosition[1]+=6.5;
     }
 
@@ -224,6 +226,8 @@ int titleScene(ALLEGRO_DISPLAY *display){
 
             //SELECT ONE PLAYER MODE
             if(mouseX>309 & mouseX<716 & mouseY>352 & mouseY<380){
+                gameMode=0;
+                playerID=1;
                 currentScene=2;
                 break;
             }
@@ -378,16 +382,21 @@ int gameModeScene(ALLEGRO_DISPLAY *display){
 
             //SELECT SAME SCREEN MODE
             if(mouseX>177.5 & mouseX<822.5 & mouseY>150 & mouseY<150+al_get_bitmap_height(screenMode)){
+                gameMode=1;
                 currentScene=2;
                 break;
             }
             //SELECT ONLINE MODE
             else if(mouseX>283 & mouseX<717 & mouseY>250 & mouseY<250+al_get_bitmap_height(onlineMode)){
+                gameMode=2;
+                playerID=2;
                 currentScene=2;
                 break;
             }
             //SELECT LOCAL MODE
             else if(mouseX>290.5 & mouseX<709.5 & mouseY>350 & mouseY<350+al_get_bitmap_height(localMode)){
+                gameMode=2;
+                playerID=1;
                 currentScene=2;
                 break;
             }
@@ -826,7 +835,7 @@ int level1(ALLEGRO_DISPLAY *display){
     ALLEGRO_TIMER *timer=NULL;
     ALLEGRO_TIMER *frameTimer=NULL;
 
-    ALLEGRO_SAMPLE *titleMusic=NULL;
+    ALLEGRO_SAMPLE *levelMusic=NULL;
     ALLEGRO_SAMPLE *jumpSound=NULL;
     ALLEGRO_SAMPLE *fieldSound=NULL;
 
@@ -834,7 +843,6 @@ int level1(ALLEGRO_DISPLAY *display){
     ALLEGRO_BITMAP *popoMove=NULL;
     ALLEGRO_BITMAP *nanaMove=NULL;
     ALLEGRO_BITMAP *dino=NULL;
-    ALLEGRO_BITMAP *bouncer3=NULL;
     ALLEGRO_BITMAP *block=NULL;
 
     //KEY VALUES (Determines which keys are able to be recognize)
@@ -843,7 +851,7 @@ int level1(ALLEGRO_DISPLAY *display){
     bool redraw=true;
     bool exit=false;
 
-    //CREATE TIMER
+    //CREATE TIMERS
     timer = al_create_timer(1.0 / FPS);
     frameTimer = al_create_timer(1.0 / AnimationFPS);
     if(!timer || !frameTimer){
@@ -871,14 +879,14 @@ int level1(ALLEGRO_DISPLAY *display){
     al_convert_mask_to_alpha(popoMove,al_map_rgb(0,0,0));
     al_convert_mask_to_alpha(nanaMove,al_map_rgb(0,0,0));
     al_convert_mask_to_alpha(dino,al_map_rgb(0,0,0));
+    al_convert_mask_to_alpha(block,al_map_rgb(0,0,0));
 
     //LOADING AUDIO FILES
-    titleMusic = al_load_sample("/home/gunther/CLionProjects/ICE_Client/_sounds/LevelMusic.wav" );
+    levelMusic = al_load_sample("/home/gunther/CLionProjects/ICE_Client/_sounds/LevelMusic.wav" );
     jumpSound = al_load_sample("/home/gunther/CLionProjects/ICE_Client/_sounds/Jump.wav" );
     fieldSound = al_load_sample("/home/gunther/CLionProjects/ICE_Client/_sounds/DestroyField.wav" );
-    if (!titleMusic || !jumpSound || !fieldSound) {
-        al_show_native_message_box(display, "Error", "Error", "Failed to load audio clip",
-                                   NULL, ALLEGRO_MESSAGEBOX_ERROR);
+    if (!levelMusic || !jumpSound || !fieldSound) {
+        al_show_native_message_box(display, "Error", "Error", "Failed to load audio clip",NULL, ALLEGRO_MESSAGEBOX_ERROR);
         al_destroy_display(display);
         al_destroy_timer(timer);
         al_destroy_bitmap(background);
@@ -891,41 +899,16 @@ int level1(ALLEGRO_DISPLAY *display){
     }
 
 
-    //CREATE BITMAP
-    bouncer3=al_create_bitmap(1000,20);
-    if(!bouncer3){
-        al_show_native_message_box(display, "Error", "Error", "Fail to create bitmap",
-                                   NULL, ALLEGRO_MESSAGEBOX_ERROR);
-        al_destroy_bitmap(background);
-        al_destroy_timer(timer);
-        al_destroy_sample(titleMusic);
-        al_destroy_sample(jumpSound);
-        al_destroy_sample(fieldSound);
-        al_destroy_timer(frameTimer);
-        al_destroy_display(display);
-        al_destroy_bitmap(dino);
-        al_destroy_bitmap(nanaMove);
-        al_destroy_bitmap(popoMove);
-        return 0;
-    }
-
-    //DRAWING BITMAPS
-
-    al_set_target_bitmap(bouncer3);
-    al_clear_to_color(al_map_rgb(0, 255, 0));
-    al_set_target_bitmap(al_get_backbuffer(display));
 
 
     //CREATE AND MANAGE EVENT QUEUE
     eventQueue=al_create_event_queue();
     if(!eventQueue){
-        al_show_native_message_box(display, "Error", "Error", "Fail to create Event Queue",
-                                   NULL, ALLEGRO_MESSAGEBOX_ERROR);
+        al_show_native_message_box(display, "Error", "Error", "Fail to create Event Queue",NULL, ALLEGRO_MESSAGEBOX_ERROR);
         al_destroy_display(display);
         al_destroy_timer(timer);
         al_destroy_timer(frameTimer);
-        al_destroy_sample(titleMusic);
-        al_destroy_bitmap(bouncer3);
+        al_destroy_sample(levelMusic);
         al_destroy_bitmap(nanaMove);
         al_destroy_bitmap(popoMove);
         al_destroy_sample(jumpSound);
@@ -940,235 +923,663 @@ int level1(ALLEGRO_DISPLAY *display){
     al_register_event_source(eventQueue, al_get_timer_event_source(timer));
     al_register_event_source(eventQueue, al_get_timer_event_source(frameTimer));
     al_register_event_source(eventQueue, al_get_keyboard_event_source());
+
+    //CLEAR BITMAP
     al_clear_to_color(al_map_rgb(0,0,0));
 
     //FLIP IMAGE BUFFERED
-
     al_flip_display();
+
     //START TIMER
     al_start_timer(timer);
     al_start_timer(frameTimer);
 
 
     //gain=volume-pan=side of sound
-    al_play_sample(titleMusic, 0.5, 0.0,1.0,ALLEGRO_PLAYMODE_LOOP,NULL);
+    al_play_sample(levelMusic, 0.5, 0.0,1.0,ALLEGRO_PLAYMODE_LOOP,NULL);
 
 
 
 
     //GAME LOOP
     while(!exit){
+
         ALLEGRO_EVENT event;
         al_wait_for_event(eventQueue,&event);
 
-
-
-        if(event.type==ALLEGRO_EVENT_TIMER) {
-
-
-
-            //SET SCREEN LIMITS TO BOUNCER
-            if (key[KEY_UP] && popoPosition[1] >= 4.0 ) {
-
-                popoPosition[1] -= movementSpeed[1];
-
-                //key[KEY_UP] = false;
-            }
-            if(!key[KEY_UP] && popoPosition[1] < 506-32){
-                popoPosition[1]+=acceleration[1];
-            }
-            if (key[KEY_DOWN] &&popoPosition[1] <= screenH - 81 - 4.0-94) {
-                //player1_y += 4.0;
-            }
-            if (key[KEY_LEFT]) {
-                if(event.timer.source ==frameTimer) {
-                    popoAnimation[0] += al_get_bitmap_width(popoMove) / 5;
-                    popoAnimation[1] = 0;
-                }
-
-                if (popoAnimation[0]>(al_get_bitmap_width(popoMove)/5)*3){
-                    popoAnimation[0]=0;
-                }
-
-                if (popoPosition[0]<-32){
-                    popoPosition[0]=1000;
-                }else {
-                    popoPosition[0]-= movementSpeed[0];
-                }
-            }
-            if (key[KEY_RIGHT]) {
-                if(event.timer.source ==frameTimer) {
-                    popoAnimation[0] += al_get_bitmap_width(popoMove) / 5;
-                    popoAnimation[1] = al_get_bitmap_height(popoMove) / 2;
-                }
-
-                if (popoAnimation[0]>(al_get_bitmap_width(popoMove)/5)*3){
-                    popoAnimation[0]=0;
-                }
-                if (popoPosition[0]>1000){
-                    popoPosition[0]=0;
-                }else {
-                    popoPosition[0] += movementSpeed[0];
-                }
-            }
-
-
-            if (key[KEY_W] && nanaPosition[1] >= 4.0) {
-                nanaPosition[1]-= movementSpeed[1];
-            }
-            if(!key[KEY_W] && nanaPosition[1]<506-32){
-                nanaPosition[1]+=acceleration[1];
-            }
-            if (key[KEY_S] && nanaPosition[1] <= screenH - 81 - 4.0-94) {
-                //player2_y += 4.0;
-            }
-            if (key[KEY_A]) {
-
-                nanaAnimation[0]+=al_get_bitmap_width(nanaMove)/5;
-                nanaAnimation[1]=0;
-
-                if (nanaAnimation[0]>(al_get_bitmap_width(nanaMove)/5)*3){
-                    nanaAnimation[0]=0;
-                }
-
-
-                if (nanaPosition[0]<-32){
-                    nanaPosition[0]=1000;
-                }else {
-                    nanaPosition[0]-= movementSpeed[0];
-                }
-            }
-            if (key[KEY_D]) {
-
-                nanaAnimation[0]+=al_get_bitmap_width(nanaMove)/5;
-                nanaAnimation[1]=al_get_bitmap_height(nanaMove)/2;
-
-                if (nanaAnimation[0]>(al_get_bitmap_width(nanaMove)/5)*3){
-                    nanaAnimation[0]=0;
-                }
-
-                if (nanaPosition[0]>1000){
-                    nanaPosition[0]=0;
-                }else {
-                    nanaPosition[0] += movementSpeed[0];
-                }
-            }
-
-            //initClient(jsonWriter(1,player1_x, player1_y, 0, 3));
-            if(event.timer.source ==frameTimer) {
-                animateEnemy(dino,dinoPosition,dinoAnimation, &dir);
-            }
-            refreshCamara();
-            redraw = true;
-        }
-        else if(event.type == ALLEGRO_EVENT_DISPLAY_CLOSE) {
+        if(event.type == ALLEGRO_EVENT_DISPLAY_CLOSE) {
+            currentScene=4;
             break;
         }
-        else if(event.type == ALLEGRO_EVENT_KEY_DOWN) {
-            switch(event.keyboard.keycode) {
-                case ALLEGRO_KEY_UP:
-                    key[KEY_UP] = true;
-                    al_play_sample(jumpSound, 1.0, 0.0,1.0,ALLEGRO_PLAYMODE_ONCE,NULL);
-                    break;
 
-                case ALLEGRO_KEY_DOWN:
-                    key[KEY_DOWN] = true;
-                    al_play_sample(fieldSound, 1.0, 0.0,1.0,ALLEGRO_PLAYMODE_ONCE,NULL);
-                    break;
+        //******************** SINGLE PLAYER MODE **********************//
 
-                case ALLEGRO_KEY_LEFT:
-                    key[KEY_LEFT] = true;
-                    break;
+        if(gameMode==0){
 
-                case ALLEGRO_KEY_RIGHT:
-                    key[KEY_RIGHT] = true;
-                    break;
+            //TIMER EVENTS
+            if(event.type==ALLEGRO_EVENT_TIMER) {
 
-                case ALLEGRO_KEY_W:
-                    key[KEY_W] = true;
-                    al_play_sample(jumpSound, 1.0, 0.0,1.0,ALLEGRO_PLAYMODE_ONCE,NULL);
-                    break;
+                //SET SCREEN LIMITS TO PLAYER
+                if (key[KEY_UP] && popoPosition[1] >= 4.0 ) {
 
-                case ALLEGRO_KEY_S:
-                    key[KEY_S] = true;
-                    al_play_sample(fieldSound, 1.0, 0.0,1.0,ALLEGRO_PLAYMODE_ONCE,NULL);
-                    break;
+                    popoPosition[1] -= movementSpeed[1];
 
-                case ALLEGRO_KEY_A:
-                    key[KEY_A] = true;
-                    break;
+                    //key[KEY_UP] = false;
+                }
 
-                case ALLEGRO_KEY_D:
-                    key[KEY_D] = true;
-                    break;
+                if(!key[KEY_UP] && popoPosition[1] < 506-32){
+                    popoPosition[1]+=acceleration[1];
+                }
+
+                if (key[KEY_DOWN] ) {
+
+                    printf("%s","Popo attack");
+                }
+                if (key[KEY_LEFT]) {
+                    if(event.timer.source ==frameTimer) {
+                        popoAnimation[0] += al_get_bitmap_width(popoMove) / 5;
+                        popoAnimation[1] = 0;
+                    }
+
+                    if (popoAnimation[0]>(al_get_bitmap_width(popoMove)/5)*3){
+                        popoAnimation[0]=0;
+                    }
+
+                    if (popoPosition[0]<-32){
+                        popoPosition[0]=1000;
+                    }else {
+                        popoPosition[0]-= movementSpeed[0];
+                    }
+                }
+                if (key[KEY_RIGHT]) {
+                    if(event.timer.source ==frameTimer) {
+                        popoAnimation[0] += al_get_bitmap_width(popoMove) / 5;
+                        popoAnimation[1] = al_get_bitmap_height(popoMove) / 2;
+                    }
+
+                    if (popoAnimation[0]>(al_get_bitmap_width(popoMove)/5)*3){
+                        popoAnimation[0]=0;
+                    }
+                    if (popoPosition[0]>1000){
+                        popoPosition[0]=0;
+                    }else {
+                        popoPosition[0] += movementSpeed[0];
+                    }
+                }
+
+                restartCamara();
+                redraw=true;
 
             }
 
-        }
-        else if(event.type == ALLEGRO_EVENT_KEY_UP) {
-            switch(event.keyboard.keycode) {
-                case ALLEGRO_KEY_UP:
-                    key[KEY_UP] = false;
-                    break;
+            //KEY DOWN EVENTS
+            else if(event.type == ALLEGRO_EVENT_KEY_DOWN) {
+                switch (event.keyboard.keycode) {
+                    case ALLEGRO_KEY_UP:
+                        key[KEY_UP] = true;
+                        al_play_sample(jumpSound, 1.0, 0.0, 1.0, ALLEGRO_PLAYMODE_ONCE, NULL);
+                        break;
 
-                case ALLEGRO_KEY_DOWN:
-                    key[KEY_DOWN] = false;
-                    break;
+                    case ALLEGRO_KEY_DOWN:
+                        key[KEY_DOWN] = true;
+                        al_play_sample(fieldSound, 1.0, 0.0, 1.0, ALLEGRO_PLAYMODE_ONCE, NULL);
+                        break;
 
-                case ALLEGRO_KEY_LEFT:
-                    key[KEY_LEFT] = false;
-                    break;
+                    case ALLEGRO_KEY_LEFT:
+                        key[KEY_LEFT] = true;
+                        break;
 
-                case ALLEGRO_KEY_RIGHT:
-                    key[KEY_RIGHT] = false;
-                    break;
-
-                case ALLEGRO_KEY_W:
-                    key[KEY_W] = false;
-                    break;
-
-                case ALLEGRO_KEY_S:
-                    key[KEY_S] = false;
-                    break;
-
-                case ALLEGRO_KEY_A:
-                    key[KEY_A] = false;
-                    break;
-
-                case ALLEGRO_KEY_D:
-                    key[KEY_D] = false;
-                    break;
-
-                case ALLEGRO_KEY_ESCAPE:
-                    exit = true;
-                    break;
+                    case ALLEGRO_KEY_RIGHT:
+                        key[KEY_RIGHT] = true;
+                        break;
+                }
             }
+
+
+            else if(event.type == ALLEGRO_EVENT_KEY_UP) {
+                switch (event.keyboard.keycode) {
+                    case ALLEGRO_KEY_UP:
+                        key[KEY_UP] = false;
+                        break;
+
+                    case ALLEGRO_KEY_DOWN:
+                        key[KEY_DOWN] = false;
+                        break;
+
+                    case ALLEGRO_KEY_LEFT:
+                        key[KEY_LEFT] = false;
+                        break;
+
+                    case ALLEGRO_KEY_RIGHT:
+                        key[KEY_RIGHT] = false;
+                        break;
+                }
+            }
+
+
+
+            if(redraw && al_is_event_queue_empty(eventQueue)){
+
+                redraw=false;
+                al_clear_to_color(al_map_rgb(0,0,0));
+
+                al_draw_bitmap_region(background,0,0,1000,3450,camaraPosition[0],camaraPosition[1],0);
+                al_draw_bitmap_region(popoMove, popoAnimation[0], popoAnimation[1], al_get_bitmap_width(popoMove)/5,al_get_bitmap_height(popoMove)/2,popoPosition[0],popoPosition[1]-60,0);
+                al_draw_bitmap_region(dino, dinoAnimation[0], dinoAnimation[1], al_get_bitmap_width(dino)/3,al_get_bitmap_height(dino)/2,dinoPosition[0],dinoPosition[1],0);
+
+                al_flip_display();
+            }
+
+
+
+
+
+
+        }
+
+            //******************** SCREEN MULTIPLAYER MODE *****************//
+
+        else if(gameMode==1){
+
+
+            if(event.type==ALLEGRO_EVENT_TIMER) {
+
+
+
+                //SET SCREEN LIMITS TO BOUNCER
+                if (key[KEY_UP] && popoPosition[1] >= 4.0 ) {
+
+                    popoPosition[1] -= movementSpeed[1];
+
+                }
+                if(!key[KEY_UP] && popoPosition[1] < 506-32){
+                    popoPosition[1]+=acceleration[1];
+                }
+                if (key[KEY_DOWN] &&popoPosition[1] ) {
+
+                    printf("%s","POPO ATTACK");
+                }
+                if (key[KEY_LEFT]) {
+                    if(event.timer.source ==frameTimer) {
+                        popoAnimation[0] += al_get_bitmap_width(popoMove) / 5;
+                        popoAnimation[1] = 0;
+                    }
+
+                    if (popoAnimation[0]>(al_get_bitmap_width(popoMove)/5)*3){
+                        popoAnimation[0]=0;
+                    }
+
+                    if (popoPosition[0]<-32){
+                        popoPosition[0]=1000;
+                    }else {
+                        popoPosition[0]-= movementSpeed[0];
+                    }
+                }
+                if (key[KEY_RIGHT]) {
+                    if(event.timer.source ==frameTimer) {
+                        popoAnimation[0] += al_get_bitmap_width(popoMove) / 5;
+                        popoAnimation[1] = al_get_bitmap_height(popoMove) / 2;
+                    }
+
+                    if (popoAnimation[0]>(al_get_bitmap_width(popoMove)/5)*3){
+                        popoAnimation[0]=0;
+                    }
+                    if (popoPosition[0]>1000){
+                        popoPosition[0]=0;
+                    }else {
+                        popoPosition[0] += movementSpeed[0];
+                    }
+                }
+
+
+                if (key[KEY_W] && nanaPosition[1] >= 4.0) {
+                    nanaPosition[1]-= movementSpeed[1];
+                }
+                if(!key[KEY_W] && nanaPosition[1]<506-32){
+                    nanaPosition[1]+=acceleration[1];
+                }
+                if (key[KEY_S] && nanaPosition[1] <= screenH - 81 - 4.0-94) {
+                    //player2_y += 4.0;
+                }
+                if (key[KEY_A]) {
+
+                    nanaAnimation[0]+=al_get_bitmap_width(nanaMove)/5;
+                    nanaAnimation[1]=0;
+
+                    if (nanaAnimation[0]>(al_get_bitmap_width(nanaMove)/5)*3){
+                        nanaAnimation[0]=0;
+                    }
+
+
+                    if (nanaPosition[0]<-32){
+                        nanaPosition[0]=1000;
+                    }else {
+                        nanaPosition[0]-= movementSpeed[0];
+                    }
+                }
+                if (key[KEY_D]) {
+
+                    nanaAnimation[0]+=al_get_bitmap_width(nanaMove)/5;
+                    nanaAnimation[1]=al_get_bitmap_height(nanaMove)/2;
+
+                    if (nanaAnimation[0]>(al_get_bitmap_width(nanaMove)/5)*3){
+                        nanaAnimation[0]=0;
+                    }
+
+                    if (nanaPosition[0]>1000){
+                        nanaPosition[0]=0;
+                    }else {
+                        nanaPosition[0] += movementSpeed[0];
+                    }
+                }
+
+
+                if(event.timer.source ==frameTimer) {
+                    animateEnemy(dino,dinoPosition,dinoAnimation, &dir);
+                }
+
+                refreshCamara();
+                redraw = true;
+            }
+
+            else if(event.type == ALLEGRO_EVENT_KEY_DOWN) {
+                switch(event.keyboard.keycode) {
+                    case ALLEGRO_KEY_UP:
+                        key[KEY_UP] = true;
+                        al_play_sample(jumpSound, 1.0, 0.0,1.0,ALLEGRO_PLAYMODE_ONCE,NULL);
+                        break;
+
+                    case ALLEGRO_KEY_DOWN:
+                        key[KEY_DOWN] = true;
+                        al_play_sample(fieldSound, 1.0, 0.0,1.0,ALLEGRO_PLAYMODE_ONCE,NULL);
+                        break;
+
+                    case ALLEGRO_KEY_LEFT:
+                        key[KEY_LEFT] = true;
+                        break;
+
+                    case ALLEGRO_KEY_RIGHT:
+                        key[KEY_RIGHT] = true;
+                        break;
+
+                    case ALLEGRO_KEY_W:
+                        key[KEY_W] = true;
+                        al_play_sample(jumpSound, 1.0, 0.0,1.0,ALLEGRO_PLAYMODE_ONCE,NULL);
+                        break;
+
+                    case ALLEGRO_KEY_S:
+                        key[KEY_S] = true;
+                        al_play_sample(fieldSound, 1.0, 0.0,1.0,ALLEGRO_PLAYMODE_ONCE,NULL);
+                        break;
+
+                    case ALLEGRO_KEY_A:
+                        key[KEY_A] = true;
+                        break;
+
+                    case ALLEGRO_KEY_D:
+                        key[KEY_D] = true;
+                        break;
+
+                }
+
+            }
+            else if(event.type == ALLEGRO_EVENT_KEY_UP) {
+                switch(event.keyboard.keycode) {
+                    case ALLEGRO_KEY_UP:
+                        key[KEY_UP] = false;
+                        break;
+
+                    case ALLEGRO_KEY_DOWN:
+                        key[KEY_DOWN] = false;
+                        break;
+
+                    case ALLEGRO_KEY_LEFT:
+                        key[KEY_LEFT] = false;
+                        break;
+
+                    case ALLEGRO_KEY_RIGHT:
+                        key[KEY_RIGHT] = false;
+                        break;
+
+                    case ALLEGRO_KEY_W:
+                        key[KEY_W] = false;
+                        break;
+
+                    case ALLEGRO_KEY_S:
+                        key[KEY_S] = false;
+                        break;
+
+                    case ALLEGRO_KEY_A:
+                        key[KEY_A] = false;
+                        break;
+
+                    case ALLEGRO_KEY_D:
+                        key[KEY_D] = false;
+                        break;
+
+                    case ALLEGRO_KEY_ESCAPE:
+                        exit = true;
+                        break;
+                }
+            }
+
+
+            if(redraw && al_is_event_queue_empty(eventQueue)){
+                redraw=false;
+                al_clear_to_color(al_map_rgb(0,0,0));
+
+                al_draw_bitmap_region(background,0,0,1000,3450,camaraPosition[0],camaraPosition[1],0);
+                al_draw_bitmap_region(popoMove, popoAnimation[0], popoAnimation[1], al_get_bitmap_width(popoMove)/5,al_get_bitmap_height(popoMove)/2,popoPosition[0],popoPosition[1]-60,0);
+                al_draw_bitmap_region(nanaMove, nanaAnimation[0], nanaAnimation[1], al_get_bitmap_width(nanaMove)/5,al_get_bitmap_height(nanaMove)/2,nanaPosition[0],nanaPosition[1]-60,0);
+                al_draw_bitmap_region(dino, dinoAnimation[0], dinoAnimation[1], al_get_bitmap_width(dino)/3,al_get_bitmap_height(dino)/2,dinoPosition[0],dinoPosition[1],0);
+
+
+                al_flip_display();
+            }
+
+
+
+
+
+
+
+
+
         }
 
 
-        if(redraw && al_is_event_queue_empty(eventQueue)){
-            redraw=false;
-            al_clear_to_color(al_map_rgb(0,0,0));
-            //al_draw_bitmap(bouncer3, 0, 506, 0);
-            al_draw_bitmap_region(background,0,0,1000,3450,camaraPosition[0],camaraPosition[1],0);
-            al_draw_bitmap_region(popoMove, popoAnimation[0], popoAnimation[1], al_get_bitmap_width(popoMove)/5,al_get_bitmap_height(popoMove)/2,popoPosition[0],popoPosition[1]-60,0);
-            al_draw_bitmap_region(nanaMove, nanaAnimation[0], nanaAnimation[1], al_get_bitmap_width(nanaMove)/5,al_get_bitmap_height(nanaMove)/2,nanaPosition[0],nanaPosition[1]-60,0);
-            al_draw_bitmap_region(dino, dinoAnimation[0], dinoAnimation[1], al_get_bitmap_width(dino)/3,al_get_bitmap_height(dino)/2,dinoPosition[0],dinoPosition[1],0);
+            //******************** LOCAL MULTIPLAYER MODE *****************//
 
-            //al_draw_bitmap(bouncer3, 0, 506, 0);
-            al_flip_display();
+        else if(gameMode==2){
+
+
+
+            if (playerID==1){
+
+                if(event.type==ALLEGRO_EVENT_TIMER) {
+
+                    //SET SCREEN LIMITS TO BOUNCER
+                    if (key[KEY_UP] && popoPosition[1] >= 4.0 ) {
+
+                        popoPosition[1] -= movementSpeed[1];
+
+                        //key[KEY_UP] = false;
+                    }
+                    if(!key[KEY_UP] && popoPosition[1] < 506-32){
+                        popoPosition[1]+=acceleration[1];
+                    }
+                    if (key[KEY_DOWN] &&popoPosition[1] <= screenH - 81 - 4.0-94) {
+                        //player1_y += 4.0;
+                    }
+                    if (key[KEY_LEFT]) {
+                        if(event.timer.source ==frameTimer) {
+                            popoAnimation[0] += al_get_bitmap_width(popoMove) / 5;
+                            popoAnimation[1] = 0;
+                        }
+
+                        if (popoAnimation[0]>(al_get_bitmap_width(popoMove)/5)*3){
+                            popoAnimation[0]=0;
+                        }
+
+                        if (popoPosition[0]<-32){
+                            popoPosition[0]=1000;
+                        }else {
+                            popoPosition[0]-= movementSpeed[0];
+                        }
+                    }
+                    if (key[KEY_RIGHT]) {
+                        if(event.timer.source ==frameTimer) {
+                            popoAnimation[0] += al_get_bitmap_width(popoMove) / 5;
+                            popoAnimation[1] = al_get_bitmap_height(popoMove) / 2;
+                        }
+
+                        if (popoAnimation[0]>(al_get_bitmap_width(popoMove)/5)*3){
+                            popoAnimation[0]=0;
+                        }
+                        if (popoPosition[0]>1000){
+                            popoPosition[0]=0;
+                        }else {
+                            popoPosition[0] += movementSpeed[0];
+                        }
+                    }
+
+                    refreshCamara();
+                    redraw=true;
+                }
+
+
+                else if(event.type == ALLEGRO_EVENT_KEY_DOWN) {
+                    switch (event.keyboard.keycode) {
+                        case ALLEGRO_KEY_UP:
+                            key[KEY_UP] = true;
+                            al_play_sample(jumpSound, 1.0, 0.0, 1.0, ALLEGRO_PLAYMODE_ONCE, NULL);
+                            break;
+
+                        case ALLEGRO_KEY_DOWN:
+                            key[KEY_DOWN] = true;
+                            al_play_sample(fieldSound, 1.0, 0.0, 1.0, ALLEGRO_PLAYMODE_ONCE, NULL);
+                            break;
+
+                        case ALLEGRO_KEY_LEFT:
+                            key[KEY_LEFT] = true;
+                            break;
+
+                        case ALLEGRO_KEY_RIGHT:
+                            key[KEY_RIGHT] = true;
+                            break;
+                    }
+                }
+
+
+                else if(event.type == ALLEGRO_EVENT_KEY_UP) {
+                    switch (event.keyboard.keycode) {
+                        case ALLEGRO_KEY_UP:
+                            key[KEY_UP] = false;
+                            break;
+
+                        case ALLEGRO_KEY_DOWN:
+                            key[KEY_DOWN] = false;
+                            break;
+
+                        case ALLEGRO_KEY_LEFT:
+                            key[KEY_LEFT] = false;
+                            break;
+
+                        case ALLEGRO_KEY_RIGHT:
+                            key[KEY_RIGHT] = false;
+                            break;
+                    }
+                }
+
+
+
+
+
+                if(redraw && al_is_event_queue_empty(eventQueue)){
+                    redraw=false;
+                    al_clear_to_color(al_map_rgb(0,0,0));
+
+                    al_draw_bitmap_region(background,0,0,1000,3450,camaraPosition[0],camaraPosition[1],0);
+                    al_draw_bitmap_region(popoMove, popoAnimation[0], popoAnimation[1], al_get_bitmap_width(popoMove)/5,al_get_bitmap_height(popoMove)/2,popoPosition[0],popoPosition[1]-60,0);
+                    al_draw_bitmap_region(nanaMove, nanaAnimation[0], nanaAnimation[1], al_get_bitmap_width(nanaMove)/5,al_get_bitmap_height(nanaMove)/2,nanaPosition[0],nanaPosition[1]-60,0);
+                    al_draw_bitmap_region(dino, dinoAnimation[0], dinoAnimation[1], al_get_bitmap_width(dino)/3,al_get_bitmap_height(dino)/2,dinoPosition[0],dinoPosition[1],0);
+
+                    al_flip_display();
+                }
+
+
+
+
+
+
+            }
+            else if(playerID==2){
+
+
+
+                if(event.type==ALLEGRO_EVENT_TIMER) {
+
+                    //SET SCREEN LIMITS TO BOUNCER
+                    if (key[KEY_UP] && nanaPosition[1] >= 4.0 ) {
+
+                        nanaPosition[1] -= movementSpeed[1];
+
+                        //key[KEY_UP] = false;
+                    }
+                    if(!key[KEY_UP] && nanaPosition[1] < 506-32){
+                        nanaPosition[1]+=acceleration[1];
+                    }
+                    if (key[KEY_DOWN] ) {
+
+                        printf("%s","NANA ATTACK");
+                    }
+                    if (key[KEY_LEFT]) {
+                        if(event.timer.source ==frameTimer) {
+                            nanaAnimation[0] += al_get_bitmap_width(nanaMove) / 5;
+                            nanaAnimation[1] = 0;
+                        }
+
+                        if (nanaAnimation[0]>(al_get_bitmap_width(nanaMove)/5)*3){
+                            nanaAnimation[0]=0;
+                        }
+
+                        if (nanaPosition[0]<-32){
+                            nanaPosition[0]=1000;
+                        }else {
+                            nanaPosition[0]-= movementSpeed[0];
+                        }
+                    }
+                    if (key[KEY_RIGHT]) {
+                        if(event.timer.source ==frameTimer) {
+                            nanaAnimation[0] += al_get_bitmap_width(nanaMove) / 5;
+                            nanaAnimation[1] = al_get_bitmap_height(nanaMove) / 2;
+                        }
+
+                        if (nanaAnimation[0]>(al_get_bitmap_width(nanaMove)/5)*3){
+                            nanaAnimation[0]=0;
+                        }
+                        if (nanaPosition[0]>1000){
+                            nanaPosition[0]=0;
+                        }else {
+                            nanaPosition[0] += movementSpeed[0];
+                        }
+                    }
+
+                    refreshCamara();
+                    redraw=true;
+
+                }
+
+
+                else if(event.type == ALLEGRO_EVENT_KEY_DOWN) {
+                    switch (event.keyboard.keycode) {
+                        case ALLEGRO_KEY_UP:
+                            key[KEY_UP] = true;
+                            al_play_sample(jumpSound, 1.0, 0.0, 1.0, ALLEGRO_PLAYMODE_ONCE, NULL);
+                            break;
+
+                        case ALLEGRO_KEY_DOWN:
+                            key[KEY_DOWN] = true;
+                            al_play_sample(fieldSound, 1.0, 0.0, 1.0, ALLEGRO_PLAYMODE_ONCE, NULL);
+                            break;
+
+                        case ALLEGRO_KEY_LEFT:
+                            key[KEY_LEFT] = true;
+                            break;
+
+                        case ALLEGRO_KEY_RIGHT:
+                            key[KEY_RIGHT] = true;
+                            break;
+                    }
+                }
+
+
+                else if(event.type == ALLEGRO_EVENT_KEY_UP) {
+                    switch (event.keyboard.keycode) {
+                        case ALLEGRO_KEY_UP:
+                            key[KEY_UP] = false;
+                            break;
+
+                        case ALLEGRO_KEY_DOWN:
+                            key[KEY_DOWN] = false;
+                            break;
+
+                        case ALLEGRO_KEY_LEFT:
+                            key[KEY_LEFT] = false;
+                            break;
+
+                        case ALLEGRO_KEY_RIGHT:
+                            key[KEY_RIGHT] = false;
+                            break;
+                    }
+                }
+
+
+
+
+
+                if(redraw && al_is_event_queue_empty(eventQueue)){
+                    redraw=false;
+                    al_clear_to_color(al_map_rgb(0,0,0));
+
+                    al_draw_bitmap_region(background,0,0,1000,3450,camaraPosition[0],camaraPosition[1],0);
+                    al_draw_bitmap_region(popoMove, popoAnimation[0], popoAnimation[1], al_get_bitmap_width(popoMove)/5,al_get_bitmap_height(popoMove)/2,popoPosition[0],popoPosition[1]-60,0);
+                    al_draw_bitmap_region(nanaMove, nanaAnimation[0], nanaAnimation[1], al_get_bitmap_width(nanaMove)/5,al_get_bitmap_height(nanaMove)/2,nanaPosition[0],nanaPosition[1]-60,0);
+                    al_draw_bitmap_region(dino, dinoAnimation[0], dinoAnimation[1], al_get_bitmap_width(dino)/3,al_get_bitmap_height(dino)/2,dinoPosition[0],dinoPosition[1],0);
+
+                    al_flip_display();
+                }
+
+
+
+
+
+
+
+            }
+            else if(playerID==3){
+
+                if(event.type==ALLEGRO_EVENT_TIMER){
+
+                    refreshCamara();
+                    redraw=true;
+                }
+
+                if(redraw && al_is_event_queue_empty(eventQueue)){
+                    redraw=false;
+                    al_clear_to_color(al_map_rgb(0,0,0));
+                    //al_draw_bitmap(bouncer3, 0, 506, 0);
+                    al_draw_bitmap_region(background,0,0,1000,3450,camaraPosition[0],camaraPosition[1],0);
+                    al_draw_bitmap_region(popoMove, popoAnimation[0], popoAnimation[1], al_get_bitmap_width(popoMove)/5,al_get_bitmap_height(popoMove)/2,popoPosition[0],popoPosition[1]-60,0);
+                    al_draw_bitmap_region(nanaMove, nanaAnimation[0], nanaAnimation[1], al_get_bitmap_width(nanaMove)/5,al_get_bitmap_height(nanaMove)/2,nanaPosition[0],nanaPosition[1]-60,0);
+                    al_draw_bitmap_region(dino, dinoAnimation[0], dinoAnimation[1], al_get_bitmap_width(dino)/3,al_get_bitmap_height(dino)/2,dinoPosition[0],dinoPosition[1],0);
+
+                    //al_draw_bitmap(bouncer3, 0, 506, 0);
+                    al_flip_display();
+                }
+
+
+            }
+
+
+
+
+
         }
+
+
+
+
 
     }
 
     //FREE MEMORY AFTER CLOSE PROGRAM
     al_destroy_bitmap(background);
-    al_destroy_sample(titleMusic);
+    al_destroy_sample(levelMusic);
     al_destroy_sample(jumpSound);
     al_destroy_sample(fieldSound);
     al_destroy_bitmap(popoMove);
     al_destroy_bitmap(nanaMove);
-    al_destroy_bitmap(bouncer3);
     al_destroy_timer(frameTimer);
     al_destroy_bitmap(dino);
     al_destroy_bitmap(block);

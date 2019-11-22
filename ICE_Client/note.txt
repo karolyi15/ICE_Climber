@@ -1,0 +1,50 @@
+
+//***************************** MANEJO DE SCENES **********************************//
+
+Se utilizara un numero entero (int) para administrar el uso de los escenas del juego.
+A continuacion, se muetran los codigos correspondientes para cada una de las escenas:
+
+*************************************************************************************
+********* Numero ID ***************************************** Escena ****************
+
+            0                                               Title screen
+            1                                                Game Mode
+            2                                              Enemy Selection
+            3                                               Game Level 1
+            4                                                 Exit Game
+
+*************************************************************************************
+*************************************************************************************
+
+
+//****************************** MANEJO DE GAME MODE ******************************//
+
+Se utilizara un numero entero para identificar el modo de juego, el modo de juego
+determinara el comportamiento del cliente.
+
+*************************************************************************************
+********* Numero ID ***************************************** Mode ******************
+
+              0                                            Single player
+              1                                          Screen Multiplayer
+              2                                          Local Multiplayer
+              3                                          Online Multiplayer
+
+*************************************************************************************
+*************************************************************************************
+
+
+//***************************** MANEJO DE PLAYER ID *******************************//
+
+Se utlizara un numero entero para determinar en player id, dicho id determina el
+uso de personajes y comportamiento del cliente
+
+*************************************************************************************
+********* Numero ID ***************************************** Acceso ****************
+
+              1                                          popo
+              2                                          nana
+              3                                          observer
+
+*************************************************************************************
+*************************************************************************************
