@@ -98,6 +98,9 @@
 		<Unit filename="/home/gunther/CLionProjects/ICE_Client/ICE_Sources/ICE_Socket.c">
 			<Option target="untitled"/>
 		</Unit>
+		<Unit filename="/home/gunther/CLionProjects/ICE_Client/ICE_Sources/ICE_Variables.c">
+			<Option target="untitled"/>
+		</Unit>
 		<Unit filename="/home/gunther/CLionProjects/ICE_Client/ICE_Sources/main.c">
 			<Option target="untitled"/>
 		</Unit>

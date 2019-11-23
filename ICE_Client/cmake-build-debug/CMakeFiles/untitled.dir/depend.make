@@ -12,6 +12,8 @@ CMakeFiles/untitled.dir/ICE_Sources/ICE_Json.c.o: ../ICE_Sources/ICE_Json.c
 CMakeFiles/untitled.dir/ICE_Sources/ICE_Socket.c.o: ../ICE_Headers/ICE_Socket.h
 CMakeFiles/untitled.dir/ICE_Sources/ICE_Socket.c.o: ../ICE_Sources/ICE_Socket.c
 
+CMakeFiles/untitled.dir/ICE_Sources/ICE_Variables.c.o: ../ICE_Sources/ICE_Variables.c
+
 CMakeFiles/untitled.dir/ICE_Sources/main.c.o: ../ICE_Headers/ICE_Game.h
 CMakeFiles/untitled.dir/ICE_Sources/main.c.o: ../ICE_Sources/main.c
 

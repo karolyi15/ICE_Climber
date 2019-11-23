@@ -79,7 +79,70 @@ float camaraPosition[2]={0,-2850};
 
 //********************* BLOCKS *********************//
 
+void blockCollide(struct Floor floors[], struct Character *character){
 
+
+    for(int floor=0;floor<7;floor++){
+
+        if(floors[floor].type==1) {
+
+            for (int block = 0; block < 23; block++) {
+
+                struct Block tempBlock = floors[floor].blocks[block];
+
+                if(character->position[1]<tempBlock.position[1]+tempBlock.dimentions[1]+camaraPosition[1]+2850 ){
+                    character->position[1]=tempBlock.position[1]+tempBlock.dimentions[1];
+                    floors[floor].blocks[block].state=false;
+                    //character->position[1]=tempBlock.position[1]-character->dimentions[1];
+                    printf("collide");
+                }
+
+
+
+            }
+
+
+        }
+        else if(floors[floor].type==2){
+
+            for (int block = 0; block < 23; block++) {
+
+                struct Block tempBlock = floors[floor].blocks[block];
+
+                if(character->position[1]<=tempBlock.position[1]+tempBlock.dimentions[1]+camaraPosition[1]+2850 && tempBlock.position[0]<character->position[0]+character->dimentions[0]/2<tempBlock.position[0]+tempBlock.dimentions[0]){
+
+                    floors[floor].blocks[block].state=false;
+                    //character->position[1]=tempBlock.position[1]-character->dimentions[1];
+                    printf("collide");
+                }
+
+
+
+            }
+
+        }
+        else if(floors[floor].type==3){
+
+            for (int block = 0; block < 23; block++) {
+
+                struct Block tempBlock = floors[floor].blocks[block];
+
+                if(character->position[1]<=tempBlock.position[1]+tempBlock.dimentions[1]+camaraPosition[1]+2850 && tempBlock.position[0]<character->position[0]+character->dimentions[0]/2<tempBlock.position[0]+tempBlock.dimentions[0]){
+
+                    floors[floor].blocks[block].state=false;
+                    //character->position[1]=tempBlock.position[1]-character->dimentions[1];
+                    printf("collide");
+                }
+
+
+
+            }
+        }
+    }
+
+
+
+}
 
 
 int collide(float xPlayer, float yPlayer, float xObstacle, float yObstacle,int playerWidth, int playerHeight,int ObstacleWidth, int ObstacleHeight){
@@ -1108,6 +1171,9 @@ int level1(ALLEGRO_DISPLAY *display){
     ALLEGRO_BITMAP *nanaMove=NULL;
     ALLEGRO_BITMAP *dino=NULL;
     ALLEGRO_BITMAP *foca=NULL;
+    ALLEGRO_BITMAP *yeti=NULL;
+    ALLEGRO_BITMAP *pajaro=NULL;
+    ALLEGRO_BITMAP *oso=NULL;
     ALLEGRO_BITMAP *block=NULL;
 
 
@@ -1134,8 +1200,11 @@ int level1(ALLEGRO_DISPLAY *display){
     background = al_load_bitmap("/home/gunther/CLionProjects/ICE_Client/_imgs/Backgrounds.png");
     block=al_load_bitmap("/home/gunther/CLionProjects/ICE_Client/_imgs/Blocks.png");
     foca=al_load_bitmap("/home/gunther/CLionProjects/ICE_Client/_imgs/Foca.png");
+    yeti=al_load_bitmap("/home/gunther/CLionProjects/ICE_Client/_imgs/Yeti.png");
+    pajaro=al_load_bitmap("/home/gunther/CLionProjects/ICE_Client/_imgs/Pajaro.png");
+    oso=al_load_bitmap("/home/gunther/CLionProjects/ICE_Client/_imgs/Oso.png");
     dino=al_load_bitmap("/home/gunther/CLionProjects/ICE_Client/_imgs/Dino.png");
-    if(!popoMove || !nanaMove || !background || !dino || !foca) {
+    if(!popoMove || !nanaMove || !background || !dino || !foca || !yeti || !oso ||!pajaro) {
         al_show_native_message_box(display, "Error", "Error", "Failed to load image file",
                                    NULL, ALLEGRO_MESSAGEBOX_ERROR);
 
@@ -1148,6 +1217,10 @@ int level1(ALLEGRO_DISPLAY *display){
     al_convert_mask_to_alpha(popoMove,al_map_rgb(0,0,0));
     al_convert_mask_to_alpha(nanaMove,al_map_rgb(0,0,0));
     al_convert_mask_to_alpha(dino,al_map_rgb(0,0,0));
+    al_convert_mask_to_alpha(oso,al_map_rgb(0,0,0));
+    al_convert_mask_to_alpha(foca,al_map_rgb(0,0,0));
+    al_convert_mask_to_alpha(pajaro,al_map_rgb(0,0,0));
+    al_convert_mask_to_alpha(yeti,al_map_rgb(0,0,0));
     al_convert_mask_to_alpha(block,al_map_rgb(0,0,0));
 
     //LOADING AUDIO FILES
@@ -1161,6 +1234,9 @@ int level1(ALLEGRO_DISPLAY *display){
         al_destroy_bitmap(background);
         al_destroy_bitmap(dino);
         al_destroy_bitmap(foca);
+        al_destroy_bitmap(oso);
+        al_destroy_bitmap(yeti);
+        al_destroy_bitmap(pajaro);
         al_destroy_bitmap(nanaMove);
         al_destroy_timer(frameTimer);
         al_destroy_bitmap(popoMove);
@@ -1181,6 +1257,9 @@ int level1(ALLEGRO_DISPLAY *display){
         al_destroy_sample(levelMusic);
         al_destroy_bitmap(nanaMove);
         al_destroy_bitmap(popoMove);
+        al_destroy_bitmap(oso);
+        al_destroy_bitmap(yeti);
+        al_destroy_bitmap(pajaro);
         al_destroy_sample(jumpSound);
         al_destroy_bitmap(foca);
         al_destroy_sample(fieldSound);
@@ -1327,25 +1406,6 @@ int level1(ALLEGRO_DISPLAY *display){
                     }
                 }
 
-                //BLOCKS COLLIDE
-
-                /*for(int floor=0;floor<7;floor++){
-
-                    for(int block=0;block<23;block++) {
-                        struct Block tempBlock = floors[floor].blocks[block];
-
-                        if(collide(Popo.position[0],Popo.position[1],tempBlock.position[0],tempBlock.position[1]+camaraPosition[1]+2850,Popo.dimentions[0],Popo.dimentions[1],tempBlock.dimentions[0],tempBlock.dimentions[1])){
-
-                            tempBlock.state=false;
-                            Popo.position[1]=tempBlock.position[1]-Popo.dimentions[1];
-
-                        }
-
-                    }
-                }*/
-
-
-
 
 
                 //ANIMATE DINO
@@ -1353,7 +1413,7 @@ int level1(ALLEGRO_DISPLAY *display){
                     animateEnemy(dino,Dino.position,Dino.animation);
                 }
 
-
+                blockCollide(floors,&Popo);
                 refreshCamara(Popo);
                 redraw=true;
 
@@ -1929,6 +1989,9 @@ int level1(ALLEGRO_DISPLAY *display){
     al_destroy_sample(fieldSound);
     al_destroy_bitmap(popoMove);
     al_destroy_bitmap(foca);
+    al_destroy_bitmap(yeti);
+    al_destroy_bitmap(oso);
+    al_destroy_bitmap(pajaro);
     al_destroy_bitmap(nanaMove);
     al_destroy_timer(frameTimer);
     al_destroy_bitmap(dino);

@@ -7,6 +7,7 @@ set(CMAKE_DEPENDS_CHECK_C
   "/home/gunther/CLionProjects/ICE_Client/ICE_Sources/ICE_Game.c" "/home/gunther/CLionProjects/ICE_Client/cmake-build-debug/CMakeFiles/untitled.dir/ICE_Sources/ICE_Game.c.o"
   "/home/gunther/CLionProjects/ICE_Client/ICE_Sources/ICE_Json.c" "/home/gunther/CLionProjects/ICE_Client/cmake-build-debug/CMakeFiles/untitled.dir/ICE_Sources/ICE_Json.c.o"
   "/home/gunther/CLionProjects/ICE_Client/ICE_Sources/ICE_Socket.c" "/home/gunther/CLionProjects/ICE_Client/cmake-build-debug/CMakeFiles/untitled.dir/ICE_Sources/ICE_Socket.c.o"
+  "/home/gunther/CLionProjects/ICE_Client/ICE_Sources/ICE_Variables.c" "/home/gunther/CLionProjects/ICE_Client/cmake-build-debug/CMakeFiles/untitled.dir/ICE_Sources/ICE_Variables.c.o"
   "/home/gunther/CLionProjects/ICE_Client/ICE_Sources/main.c" "/home/gunther/CLionProjects/ICE_Client/cmake-build-debug/CMakeFiles/untitled.dir/ICE_Sources/main.c.o"
   )
 set(CMAKE_C_COMPILER_ID "GNU")

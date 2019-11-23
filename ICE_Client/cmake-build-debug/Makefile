@@ -204,6 +204,33 @@ ICE_Sources/ICE_Socket.c.s:
 	$(MAKE) -f CMakeFiles/untitled.dir/build.make CMakeFiles/untitled.dir/ICE_Sources/ICE_Socket.c.s
 .PHONY : ICE_Sources/ICE_Socket.c.s
 
+ICE_Sources/ICE_Variables.o: ICE_Sources/ICE_Variables.c.o
+
+.PHONY : ICE_Sources/ICE_Variables.o
+
+# target to build an object file
+ICE_Sources/ICE_Variables.c.o:
+	$(MAKE) -f CMakeFiles/untitled.dir/build.make CMakeFiles/untitled.dir/ICE_Sources/ICE_Variables.c.o
+.PHONY : ICE_Sources/ICE_Variables.c.o
+
+ICE_Sources/ICE_Variables.i: ICE_Sources/ICE_Variables.c.i
+
+.PHONY : ICE_Sources/ICE_Variables.i
+
+# target to preprocess a source file
+ICE_Sources/ICE_Variables.c.i:
+	$(MAKE) -f CMakeFiles/untitled.dir/build.make CMakeFiles/untitled.dir/ICE_Sources/ICE_Variables.c.i
+.PHONY : ICE_Sources/ICE_Variables.c.i
+
+ICE_Sources/ICE_Variables.s: ICE_Sources/ICE_Variables.c.s
+
+.PHONY : ICE_Sources/ICE_Variables.s
+
+# target to generate assembly for a file
+ICE_Sources/ICE_Variables.c.s:
+	$(MAKE) -f CMakeFiles/untitled.dir/build.make CMakeFiles/untitled.dir/ICE_Sources/ICE_Variables.c.s
+.PHONY : ICE_Sources/ICE_Variables.c.s
+
 ICE_Sources/main.o: ICE_Sources/main.c.o
 
 .PHONY : ICE_Sources/main.o
@@ -249,6 +276,9 @@ help:
 	@echo "... ICE_Sources/ICE_Socket.o"
 	@echo "... ICE_Sources/ICE_Socket.i"
 	@echo "... ICE_Sources/ICE_Socket.s"
+	@echo "... ICE_Sources/ICE_Variables.o"
+	@echo "... ICE_Sources/ICE_Variables.i"
+	@echo "... ICE_Sources/ICE_Variables.s"
 	@echo "... ICE_Sources/main.o"
 	@echo "... ICE_Sources/main.i"
 	@echo "... ICE_Sources/main.s"
