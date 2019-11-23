@@ -26,7 +26,7 @@ const float FPS=60;//DETERMINES FRAMES PER SECOND IN THE GAME
 const float AnimationFPS=10.0;//DETERMINES ANIMATION SPEED
 
 float movementSpeed[2]={4.0, 7.0};//CHARACTERS MOVEMENT SPEED
-float acceleration[2]={0,9.8};//CHARACTER MOVEMENT ACCELERATION
+float acceleration[2]={1,9.8};//CHARACTER MOVEMENT ACCELERATION
 
 int currentScene=0;//Determines WHICH SCENE THE USER IS GONNA SEE
 int gameMode;
@@ -34,22 +34,22 @@ int playerID;
 
 //******************** PLAYERS *********************//
 
-float popoPosition[2]={718,506-81};//POPO POSITION
-float popoAnimation[2]={0,0};//POPO ANIMATION FRAMES
-float popoScore=0;//POPO SCORE
-float popoLives=3;//POPO LIVES
+struct Character{
 
-float nanaPosition[2]={250,425};//NANA POSITION
-float nanaAnimation[2]={0,0};//NANA ANIMATION FRAMES
-float nanaScore=0;//NANA SCORE
-float nanaLives=3;//NANA LIVES
+    float position[2];
+    float animation[2];
+    float dimentions[2];
+    int score;
+    int lives;
+    int *direction;
+
+};
+
+
 
 //******************** ENEMIES *********************//
 
-float dinoPosition[2]={125,506};//DINO POSITION
-float dinoAnimation[2]={0,0};//DINO ANIMATION FRAMES
-int dinoDirection=1;//DINO DIRECTION
-int dir=1;
+int dinoDirection;
 
 struct  Block{
 
@@ -67,6 +67,7 @@ struct Floor{
     struct Block blocks[23];
 };
 
+
 //******************** CAMARA **********************//
 
 float camaraPosition[2]={0,-2850};
@@ -78,6 +79,16 @@ float camaraPosition[2]={0,-2850};
 
 //********************* BLOCKS *********************//
 
+
+
+
+int collide(float xPlayer, float yPlayer, float xObstacle, float yObstacle,int playerWidth, int playerHeight,int ObstacleWidth, int ObstacleHeight){
+
+    if(xPlayer+playerWidth <= xObstacle || xPlayer >= xObstacle+ObstacleWidth || yPlayer+playerHeight <= yObstacle+68 || yPlayer >= yObstacle+ObstacleHeight){
+        return false;
+    }
+    return true;
+}
 
 
 void createBlocks(struct Block blocks[],ALLEGRO_BITMAP *image,int blockX,int blockY, int type){
@@ -243,9 +254,13 @@ void displayFloors(struct Floor floors[], ALLEGRO_BITMAP *image){
 
                 struct Block tempBlock = floors[floor].blocks[block];
 
-                al_draw_bitmap_region(image, tempBlock.animation[0], tempBlock.animation[1], tempBlock.dimentions[0],
-                                      tempBlock.dimentions[1], tempBlock.position[0],
-                                      tempBlock.position[1] + camaraPosition[1] + 2850, 0);
+                if(tempBlock.state==true) {
+
+                    al_draw_bitmap_region(image, tempBlock.animation[0], tempBlock.animation[1],
+                                          tempBlock.dimentions[0],
+                                          tempBlock.dimentions[1], tempBlock.position[0],
+                                          tempBlock.position[1] + camaraPosition[1] + 2850, 0);
+                }
             }
 
         }
@@ -255,9 +270,12 @@ void displayFloors(struct Floor floors[], ALLEGRO_BITMAP *image){
 
                 struct Block tempBlock = floors[floor].blocks[block];
 
-                al_draw_bitmap_region(image, tempBlock.animation[0], tempBlock.animation[1], tempBlock.dimentions[0],
-                                      tempBlock.dimentions[1], tempBlock.position[0],
-                                      tempBlock.position[1] + camaraPosition[1] + 2850, 0);
+                if(tempBlock.state==true) {
+                    al_draw_bitmap_region(image, tempBlock.animation[0], tempBlock.animation[1],
+                                          tempBlock.dimentions[0],
+                                          tempBlock.dimentions[1], tempBlock.position[0],
+                                          tempBlock.position[1] + camaraPosition[1] + 2850, 0);
+                }
             }
 
 
@@ -268,9 +286,12 @@ void displayFloors(struct Floor floors[], ALLEGRO_BITMAP *image){
 
                 struct Block tempBlock = floors[floor].blocks[block];
 
-                al_draw_bitmap_region(image, tempBlock.animation[0], tempBlock.animation[1], tempBlock.dimentions[0],
-                                      tempBlock.dimentions[1], tempBlock.position[0],
-                                      tempBlock.position[1] + camaraPosition[1] + 2850, 0);
+                if(tempBlock.state==true) {
+                    al_draw_bitmap_region(image, tempBlock.animation[0], tempBlock.animation[1],
+                                          tempBlock.dimentions[0],
+                                          tempBlock.dimentions[1], tempBlock.position[0],
+                                          tempBlock.position[1] + camaraPosition[1] + 2850, 0);
+                }
             }
 
 
@@ -278,11 +299,7 @@ void displayFloors(struct Floor floors[], ALLEGRO_BITMAP *image){
         }
 
 
-
-
     }
-
-
 
 }
 
@@ -297,14 +314,10 @@ void displayFloors(struct Floor floors[], ALLEGRO_BITMAP *image){
 
 
 
-
-
-
-
 //********************* CAMARA *********************//
 
-void refreshCamara(){
-    if (popoPosition[1]<=300 || nanaPosition[1]<=300 || dinoPosition[1]<=300 & dinoPosition[1]>200){
+void refreshCamara(struct Character character){
+    if (character.position[1]<=250){
         camaraPosition[1]+=6.5;
     }
 
@@ -320,7 +333,7 @@ void restartCamara(){
 
 //******************* ANIMATIONS *******************//
 
-void animateEnemy(ALLEGRO_BITMAP *dino, float dinoPosition[] ,float dinoAnimation[], int dir){
+void animateEnemy(ALLEGRO_BITMAP *dino, float dinoPosition[] ,float dinoAnimation[]){
 
 
     //Animation
@@ -329,25 +342,24 @@ void animateEnemy(ALLEGRO_BITMAP *dino, float dinoPosition[] ,float dinoAnimatio
         dinoAnimation[0]=0;
     }
     //Direction
-    if(dir==0 ){
+    if(dinoDirection==0 ){
         dinoAnimation[1]=0;
         if(dinoPosition[0] >= 4.0){
-            dinoPosition[0]-=25;
+            dinoPosition[0]-=25*acceleration[0];
         }else{
-            dir=1;
+            dinoDirection=1;
         }
     }
-    else if (dir==1 ){
+    else if (dinoDirection==1 ){
         dinoAnimation[1]=(al_get_bitmap_height(dino)/2);
         if(dinoPosition[0]<=(996-al_get_bitmap_width(dino)/3)){
-            dinoPosition[0]+=25;
+            dinoPosition[0]+=25*acceleration[0];
         }else{
 
-            dir=0;
+            dinoDirection=0;
         }
     }
 }
-
 
 
 //************************************************************************************************************************************//
@@ -994,6 +1006,17 @@ int levelIntro(ALLEGRO_DISPLAY *display) {
 
     al_clear_to_color(al_map_rgb(0, 0, 0));
 
+    //CREATE DINO
+    struct Character Dino;
+    Dino.position[0]=125;
+    Dino.position[1]=506;
+    Dino.animation[0]=0;
+    Dino.animation[1]=0;
+    Dino.dimentions[0]=al_get_bitmap_width(dino)/3;
+    Dino.dimentions[1]=al_get_bitmap_height(dino)/2;
+    Dino.direction=1;
+
+
     //FLIP IMAGE BUFFERED
     al_flip_display();
 
@@ -1015,24 +1038,24 @@ int levelIntro(ALLEGRO_DISPLAY *display) {
 
             if(event.timer.source==timer){
 
-                if(dinoPosition[1]>=300) {
-                    dinoPosition[1] -= 20;
+                if(Dino.position[1]>=300) {
+                    Dino.position[1] -= 20;
                 }
                 else if (camaraPosition[1]==0){
                     al_rest(0.5);
-                    dinoPosition[1]=506;
+                    Dino.position[1]=506;
                     break;
                 }
             }
 
             if (event.timer.source == frameTimer) {
-                dinoAnimation[0]+=al_get_bitmap_width(dino)/3;
-                if(dinoAnimation[0]>=al_get_bitmap_width(dino)){
-                    dinoAnimation[0]=0;
+                Dino.animation[0]+=al_get_bitmap_width(dino)/3;
+                if(Dino.animation[0]>=al_get_bitmap_width(dino)){
+                    Dino.animation[0]=0;
                 }
             }
 
-            refreshCamara();
+            refreshCamara(Dino);
             redraw = true;
 
 
@@ -1045,7 +1068,7 @@ int levelIntro(ALLEGRO_DISPLAY *display) {
             al_clear_to_color(al_map_rgb(0, 0, 0));
 
             al_draw_bitmap_region(background, 0, 0, 1000, 3450, camaraPosition[0], camaraPosition[1], 0);
-            al_draw_bitmap_region(dino, dinoAnimation[0], dinoAnimation[1], al_get_bitmap_width(dino) / 3,al_get_bitmap_height(dino) / 2, 500-(al_get_bitmap_width(dino)/3)/2, dinoPosition[1], 0);
+            al_draw_bitmap_region(dino, Dino.animation[0], Dino.animation[1], al_get_bitmap_width(dino) / 3,al_get_bitmap_height(dino) / 2, 500-(al_get_bitmap_width(dino)/3)/2, Dino.position[1], 0);
 
 
             al_flip_display();
@@ -1084,6 +1107,7 @@ int level1(ALLEGRO_DISPLAY *display){
     ALLEGRO_BITMAP *popoMove=NULL;
     ALLEGRO_BITMAP *nanaMove=NULL;
     ALLEGRO_BITMAP *dino=NULL;
+    ALLEGRO_BITMAP *foca=NULL;
     ALLEGRO_BITMAP *block=NULL;
 
 
@@ -1109,8 +1133,9 @@ int level1(ALLEGRO_DISPLAY *display){
     nanaMove=al_load_bitmap("/home/gunther/CLionProjects/ICE_Client/_imgs/Nana.png");
     background = al_load_bitmap("/home/gunther/CLionProjects/ICE_Client/_imgs/Backgrounds.png");
     block=al_load_bitmap("/home/gunther/CLionProjects/ICE_Client/_imgs/Blocks.png");
+    foca=al_load_bitmap("/home/gunther/CLionProjects/ICE_Client/_imgs/Foca.png");
     dino=al_load_bitmap("/home/gunther/CLionProjects/ICE_Client/_imgs/Dino.png");
-    if(!popoMove || !nanaMove || !background || !dino) {
+    if(!popoMove || !nanaMove || !background || !dino || !foca) {
         al_show_native_message_box(display, "Error", "Error", "Failed to load image file",
                                    NULL, ALLEGRO_MESSAGEBOX_ERROR);
 
@@ -1135,6 +1160,7 @@ int level1(ALLEGRO_DISPLAY *display){
         al_destroy_timer(timer);
         al_destroy_bitmap(background);
         al_destroy_bitmap(dino);
+        al_destroy_bitmap(foca);
         al_destroy_bitmap(nanaMove);
         al_destroy_timer(frameTimer);
         al_destroy_bitmap(popoMove);
@@ -1156,6 +1182,7 @@ int level1(ALLEGRO_DISPLAY *display){
         al_destroy_bitmap(nanaMove);
         al_destroy_bitmap(popoMove);
         al_destroy_sample(jumpSound);
+        al_destroy_bitmap(foca);
         al_destroy_sample(fieldSound);
         al_destroy_bitmap(background);
         al_destroy_bitmap(dino);
@@ -1176,6 +1203,38 @@ int level1(ALLEGRO_DISPLAY *display){
     struct Floor floors[7];
 
     createFloors(floors,block);
+
+    //CREATE PLAYER CHARACTERS
+
+    struct Character Popo;
+    Popo.position[0]=718;
+    Popo.position[1]=425;
+    Popo.animation[0]=0;
+    Popo.animation[1]=0;
+    Popo.dimentions[0]=al_get_bitmap_width(popoMove)/5;
+    Popo.dimentions[1]=al_get_bitmap_height(popoMove)/2;
+    Popo.lives=3;
+    Popo.score=0;
+
+    struct Character Nana;
+    Nana.position[0]=250;
+    Nana.position[1]=425;
+    Nana.animation[0]=0;
+    Nana.animation[1]=0;
+    Nana.dimentions[0]=al_get_bitmap_width(nanaMove)/5;
+    Nana.dimentions[1]=al_get_bitmap_height(nanaMove)/2;
+    Nana.lives=3;
+    Nana.score=0;
+
+    struct Character Dino;
+    Dino.position[0]=125;
+    Dino.position[1]=-2747;
+    Dino.animation[0]=0;
+    Dino.animation[1]=0;
+    Dino.dimentions[0]=al_get_bitmap_width(dino)/3;
+    Dino.dimentions[1]=al_get_bitmap_height(dino)/2;
+    Dino.direction=1;
+
 
 
     //***********************************************************************************
@@ -1204,6 +1263,7 @@ int level1(ALLEGRO_DISPLAY *display){
             break;
         }
 
+
         //******************** SINGLE PLAYER MODE **********************//
 
         if(gameMode==0){
@@ -1211,16 +1271,24 @@ int level1(ALLEGRO_DISPLAY *display){
             //TIMER EVENTS
             if(event.type==ALLEGRO_EVENT_TIMER) {
 
+                //WIN GAME
+                if(collide(Popo.position[0],Popo.position[1],Dino.position[0],Dino.position[1]+camaraPosition[1]+2850,Popo.dimentions[0],Popo.dimentions[1],Dino.dimentions[0],Dino.dimentions[1])){
+                    restartCamara();
+                    currentScene=3;
+                    acceleration[0]+=1.5;
+                    break;
+                }
+
                 //SET SCREEN LIMITS TO PLAYER
                 if (key[KEY_UP]  ) {
                     jump=false;
-                    popoPosition[1] -= movementSpeed[1];
+                    Popo.position[1] -= movementSpeed[1];
 
                     //key[KEY_UP] = false;
                 }
 
-                if(!key[KEY_UP] && popoPosition[1] < 506-32){
-                    popoPosition[1]+=acceleration[1];
+                if(!key[KEY_UP] && Popo.position[1] < 506-32){
+                    Popo.position[1]+=acceleration[1];
                 }
 
                 if (key[KEY_DOWN] ) {
@@ -1229,38 +1297,64 @@ int level1(ALLEGRO_DISPLAY *display){
                 }
                 if (key[KEY_LEFT]) {
                     if(event.timer.source ==frameTimer) {
-                        popoAnimation[0] += al_get_bitmap_width(popoMove) / 5;
-                        popoAnimation[1] = 0;
+                        Popo.animation[0] += al_get_bitmap_width(popoMove) / 5;
+                        Popo.animation[1] = 0;
                     }
 
-                    if (popoAnimation[0]>(al_get_bitmap_width(popoMove)/5)*3){
-                        popoAnimation[0]=0;
+                    if (Popo.animation[0]>(al_get_bitmap_width(popoMove)/5)*3){
+                        Popo.animation[0]=0;
                     }
 
-                    if (popoPosition[0]<-32){
-                        popoPosition[0]=1000;
+                    if (Popo.position[0]<-32){
+                        Popo.position[0]=1000;
                     }else {
-                        popoPosition[0]-= movementSpeed[0];
+                        Popo.position[0]-= movementSpeed[0];
                     }
                 }
                 if (key[KEY_RIGHT]) {
                     if(event.timer.source ==frameTimer) {
-                        popoAnimation[0] += al_get_bitmap_width(popoMove) / 5;
-                        popoAnimation[1] = al_get_bitmap_height(popoMove) / 2;
+                        Popo.animation[0] += al_get_bitmap_width(popoMove) / 5;
+                        Popo.animation[1] = al_get_bitmap_height(popoMove) / 2;
                     }
 
-                    if (popoAnimation[0]>(al_get_bitmap_width(popoMove)/5)*3){
-                        popoAnimation[0]=0;
+                    if (Popo.animation[0]>(al_get_bitmap_width(popoMove)/5)*3){
+                        Popo.animation[0]=0;
                     }
-                    if (popoPosition[0]>1000){
-                        popoPosition[0]=0;
+                    if (Popo.position[0]>1000){
+                        Popo.position[0]=0;
                     }else {
-                        popoPosition[0] += movementSpeed[0];
+                        Popo.position[0] += movementSpeed[0];
                     }
                 }
 
+                //BLOCKS COLLIDE
 
-                refreshCamara();
+                /*for(int floor=0;floor<7;floor++){
+
+                    for(int block=0;block<23;block++) {
+                        struct Block tempBlock = floors[floor].blocks[block];
+
+                        if(collide(Popo.position[0],Popo.position[1],tempBlock.position[0],tempBlock.position[1]+camaraPosition[1]+2850,Popo.dimentions[0],Popo.dimentions[1],tempBlock.dimentions[0],tempBlock.dimentions[1])){
+
+                            tempBlock.state=false;
+                            Popo.position[1]=tempBlock.position[1]-Popo.dimentions[1];
+
+                        }
+
+                    }
+                }*/
+
+
+
+
+
+                //ANIMATE DINO
+                if(event.timer.source==frameTimer){
+                    animateEnemy(dino,Dino.position,Dino.animation);
+                }
+
+
+                refreshCamara(Popo);
                 redraw=true;
 
             }
@@ -1317,8 +1411,8 @@ int level1(ALLEGRO_DISPLAY *display){
                 al_clear_to_color(al_map_rgb(0,0,0));
 
                 al_draw_bitmap_region(background,0,0,1000,3450,camaraPosition[0],camaraPosition[1],0);
-                al_draw_bitmap_region(popoMove, popoAnimation[0], popoAnimation[1], al_get_bitmap_width(popoMove)/5,al_get_bitmap_height(popoMove)/2,popoPosition[0],popoPosition[1]-60,0);
-                al_draw_bitmap_region(dino, dinoAnimation[0], dinoAnimation[1], al_get_bitmap_width(dino)/3,al_get_bitmap_height(dino)/2,dinoPosition[0],dinoPosition[1],0);
+                al_draw_bitmap_region(popoMove, Popo.animation[0], Popo.animation[1], al_get_bitmap_width(popoMove)/5,al_get_bitmap_height(popoMove)/2,Popo.position[0],Popo.position[1]-60,0);
+                al_draw_bitmap_region(dino, Dino.animation[0], Dino.animation[1], al_get_bitmap_width(dino)/3,al_get_bitmap_height(dino)/2,Dino.position[0],Dino.position[1]+camaraPosition[1]+2850,0);
                 displayFloors(floors,block);
 
                 al_flip_display();
@@ -1341,98 +1435,99 @@ int level1(ALLEGRO_DISPLAY *display){
 
 
                 //SET SCREEN LIMITS TO BOUNCER
-                if (key[KEY_UP] && popoPosition[1] >= 4.0 ) {
+                if (key[KEY_UP] && Popo.position[1] >= 4.0 ) {
 
-                    popoPosition[1] -= movementSpeed[1];
+                    Popo.position[1] -= movementSpeed[1];
 
                 }
-                if(!key[KEY_UP] && popoPosition[1] < 506-32){
-                    popoPosition[1]+=acceleration[1];
+                if(!key[KEY_UP] && Popo.position[1] < 506-32){
+                    Popo.position[1]+=acceleration[1];
                 }
-                if (key[KEY_DOWN] &&popoPosition[1] ) {
+                if (key[KEY_DOWN] &&Popo.position[1] ) {
 
                     printf("%s","POPO ATTACK");
                 }
                 if (key[KEY_LEFT]) {
                     if(event.timer.source ==frameTimer) {
-                        popoAnimation[0] += al_get_bitmap_width(popoMove) / 5;
-                        popoAnimation[1] = 0;
+                        Popo.animation[0] += al_get_bitmap_width(popoMove) / 5;
+                        Popo.animation[1] = 0;
                     }
 
-                    if (popoAnimation[0]>(al_get_bitmap_width(popoMove)/5)*3){
-                        popoAnimation[0]=0;
+                    if (Popo.animation[0]>(al_get_bitmap_width(popoMove)/5)*3){
+                        Popo.animation[0]=0;
                     }
 
-                    if (popoPosition[0]<-32){
-                        popoPosition[0]=1000;
+                    if (Popo.position[0]<-32){
+                        Popo.position[0]=1000;
                     }else {
-                        popoPosition[0]-= movementSpeed[0];
+                        Popo.position[0]-= movementSpeed[0];
                     }
                 }
                 if (key[KEY_RIGHT]) {
                     if(event.timer.source ==frameTimer) {
-                        popoAnimation[0] += al_get_bitmap_width(popoMove) / 5;
-                        popoAnimation[1] = al_get_bitmap_height(popoMove) / 2;
+                        Popo.animation[0] += al_get_bitmap_width(popoMove) / 5;
+                        Popo.animation[1] = al_get_bitmap_height(popoMove) / 2;
                     }
 
-                    if (popoAnimation[0]>(al_get_bitmap_width(popoMove)/5)*3){
-                        popoAnimation[0]=0;
+                    if (Popo.animation[0]>(al_get_bitmap_width(popoMove)/5)*3){
+                        Popo.animation[0]=0;
                     }
-                    if (popoPosition[0]>1000){
-                        popoPosition[0]=0;
+                    if (Popo.position[0]>1000){
+                        Popo.position[0]=0;
                     }else {
-                        popoPosition[0] += movementSpeed[0];
+                        Popo.position[0] += movementSpeed[0];
                     }
                 }
 
 
-                if (key[KEY_W] && nanaPosition[1] >= 4.0) {
-                    nanaPosition[1]-= movementSpeed[1];
+                if (key[KEY_W] && Popo.position[1] >= 4.0) {
+                    Nana.position[1]-= movementSpeed[1];
                 }
-                if(!key[KEY_W] && nanaPosition[1]<506-32){
-                    nanaPosition[1]+=acceleration[1];
+                if(!key[KEY_W] && Nana.position[1]<506-32){
+                    Nana.position[1]+=acceleration[1];
                 }
-                if (key[KEY_S] && nanaPosition[1] <= screenH - 81 - 4.0-94) {
+                if (key[KEY_S] && Nana.position[1] <= screenH - 81 - 4.0-94) {
                     //player2_y += 4.0;
                 }
                 if (key[KEY_A]) {
 
-                    nanaAnimation[0]+=al_get_bitmap_width(nanaMove)/5;
-                    nanaAnimation[1]=0;
+                    Nana.position[0]+=al_get_bitmap_width(nanaMove)/5;
+                    Nana.position[1]=0;
 
-                    if (nanaAnimation[0]>(al_get_bitmap_width(nanaMove)/5)*3){
-                        nanaAnimation[0]=0;
+                    if (Nana.position[0]>(al_get_bitmap_width(nanaMove)/5)*3){
+                        Nana.position[0]=0;
                     }
 
 
-                    if (nanaPosition[0]<-32){
-                        nanaPosition[0]=1000;
+                    if (Nana.position[0]<-32){
+                        Nana.position[0]=1000;
                     }else {
-                        nanaPosition[0]-= movementSpeed[0];
+                        Nana.position[0]-= movementSpeed[0];
                     }
                 }
                 if (key[KEY_D]) {
 
-                    nanaAnimation[0]+=al_get_bitmap_width(nanaMove)/5;
-                    nanaAnimation[1]=al_get_bitmap_height(nanaMove)/2;
+                    Nana.animation[0]+=al_get_bitmap_width(nanaMove)/5;
+                    Nana.animation[1]=al_get_bitmap_height(nanaMove)/2;
 
-                    if (nanaAnimation[0]>(al_get_bitmap_width(nanaMove)/5)*3){
-                        nanaAnimation[0]=0;
+                    if (Nana.animation[0]>(al_get_bitmap_width(nanaMove)/5)*3){
+                        Nana.animation[0]=0;
                     }
 
-                    if (nanaPosition[0]>1000){
-                        nanaPosition[0]=0;
+                    if (Nana.position[0]>1000){
+                        Nana.position[0]=0;
                     }else {
-                        nanaPosition[0] += movementSpeed[0];
+                        Nana.position[0] += movementSpeed[0];
                     }
                 }
 
 
                 if(event.timer.source ==frameTimer) {
-                    animateEnemy(dino,dinoPosition,dinoAnimation, &dir);
+                    //animateEnemy(dino,Dino.position,Dino.animation, Dino.direction);
                 }
 
-                refreshCamara();
+                refreshCamara(Popo);
+                refreshCamara(Nana);
                 redraw = true;
             }
 
@@ -1523,9 +1618,9 @@ int level1(ALLEGRO_DISPLAY *display){
                 al_clear_to_color(al_map_rgb(0,0,0));
 
                 al_draw_bitmap_region(background,0,0,1000,3450,camaraPosition[0],camaraPosition[1],0);
-                al_draw_bitmap_region(popoMove, popoAnimation[0], popoAnimation[1], al_get_bitmap_width(popoMove)/5,al_get_bitmap_height(popoMove)/2,popoPosition[0],popoPosition[1]-60,0);
-                al_draw_bitmap_region(nanaMove, nanaAnimation[0], nanaAnimation[1], al_get_bitmap_width(nanaMove)/5,al_get_bitmap_height(nanaMove)/2,nanaPosition[0],nanaPosition[1]-60,0);
-                al_draw_bitmap_region(dino, dinoAnimation[0], dinoAnimation[1], al_get_bitmap_width(dino)/3,al_get_bitmap_height(dino)/2,dinoPosition[0],dinoPosition[1],0);
+                al_draw_bitmap_region(popoMove, Popo.animation[0], Popo.animation[1], al_get_bitmap_width(popoMove)/5,al_get_bitmap_height(popoMove)/2,Popo.position[0],Popo.position[1]-60,0);
+                al_draw_bitmap_region(nanaMove, Nana.animation[0], Nana.animation[1], al_get_bitmap_width(nanaMove)/5,al_get_bitmap_height(nanaMove)/2,Nana.position[0],Nana.position[1]-60,0);
+                al_draw_bitmap_region(dino, Dino.animation[0], Dino.animation[1], al_get_bitmap_width(dino)/3,al_get_bitmap_height(dino)/2,Dino.position[0],Dino.position[1]+camaraPosition[1]+2850,0);
                 displayFloors(floors,block);
 
                 al_flip_display();
@@ -1553,51 +1648,52 @@ int level1(ALLEGRO_DISPLAY *display){
                 if(event.type==ALLEGRO_EVENT_TIMER) {
 
                     //SET SCREEN LIMITS TO BOUNCER
-                    if (key[KEY_UP] && popoPosition[1] >= 4.0 ) {
+                    if (key[KEY_UP] && Popo.position[1] >= 4.0 ) {
 
-                        popoPosition[1] -= movementSpeed[1];
+                        Popo.position[1] -= movementSpeed[1];
 
                         //key[KEY_UP] = false;
                     }
-                    if(!key[KEY_UP] && popoPosition[1] < 506-32){
-                        popoPosition[1]+=acceleration[1];
+                    if(!key[KEY_UP] && Popo.position[1] < 506-32){
+                        Popo.position[1]+=acceleration[1];
                     }
-                    if (key[KEY_DOWN] &&popoPosition[1] <= screenH - 81 - 4.0-94) {
+                    if (key[KEY_DOWN] &&Popo.position[1] <= screenH - 81 - 4.0-94) {
                         //player1_y += 4.0;
                     }
                     if (key[KEY_LEFT]) {
                         if(event.timer.source ==frameTimer) {
-                            popoAnimation[0] += al_get_bitmap_width(popoMove) / 5;
-                            popoAnimation[1] = 0;
+                            Popo.animation[0] += al_get_bitmap_width(popoMove) / 5;
+                            Popo.animation[1] = 0;
                         }
 
-                        if (popoAnimation[0]>(al_get_bitmap_width(popoMove)/5)*3){
-                            popoAnimation[0]=0;
+                        if (Popo.animation[0]>(al_get_bitmap_width(popoMove)/5)*3){
+                            Popo.animation[0]=0;
                         }
 
-                        if (popoPosition[0]<-32){
-                            popoPosition[0]=1000;
+                        if (Popo.position[0]<-32){
+                            Popo.position[0]=1000;
                         }else {
-                            popoPosition[0]-= movementSpeed[0];
+                            Popo.position[0]-= movementSpeed[0];
                         }
                     }
                     if (key[KEY_RIGHT]) {
                         if(event.timer.source ==frameTimer) {
-                            popoAnimation[0] += al_get_bitmap_width(popoMove) / 5;
-                            popoAnimation[1] = al_get_bitmap_height(popoMove) / 2;
+                            Popo.animation[0] += al_get_bitmap_width(popoMove) / 5;
+                            Popo.animation[1] = al_get_bitmap_height(popoMove) / 2;
                         }
 
-                        if (popoAnimation[0]>(al_get_bitmap_width(popoMove)/5)*3){
-                            popoAnimation[0]=0;
+                        if (Popo.animation[0]>(al_get_bitmap_width(popoMove)/5)*3){
+                            Popo.animation[0]=0;
                         }
-                        if (popoPosition[0]>1000){
-                            popoPosition[0]=0;
+                        if (Popo.position[0]>1000){
+                            Popo.position[0]=0;
                         }else {
-                            popoPosition[0] += movementSpeed[0];
+                            Popo.position[0] += movementSpeed[0];
                         }
                     }
 
-                    refreshCamara();
+                    refreshCamara(Popo);
+                    refreshCamara(Nana);
                     redraw=true;
                 }
 
@@ -1654,9 +1750,9 @@ int level1(ALLEGRO_DISPLAY *display){
                     al_clear_to_color(al_map_rgb(0,0,0));
 
                     al_draw_bitmap_region(background,0,0,1000,3450,camaraPosition[0],camaraPosition[1],0);
-                    al_draw_bitmap_region(popoMove, popoAnimation[0], popoAnimation[1], al_get_bitmap_width(popoMove)/5,al_get_bitmap_height(popoMove)/2,popoPosition[0],popoPosition[1]-60,0);
-                    al_draw_bitmap_region(nanaMove, nanaAnimation[0], nanaAnimation[1], al_get_bitmap_width(nanaMove)/5,al_get_bitmap_height(nanaMove)/2,nanaPosition[0],nanaPosition[1]-60,0);
-                    al_draw_bitmap_region(dino, dinoAnimation[0], dinoAnimation[1], al_get_bitmap_width(dino)/3,al_get_bitmap_height(dino)/2,dinoPosition[0],dinoPosition[1],0);
+                    al_draw_bitmap_region(popoMove, Popo.animation[0], Popo.animation[1], al_get_bitmap_width(popoMove)/5,al_get_bitmap_height(popoMove)/2,Popo.position[0],Popo.position[1]-60,0);
+                    al_draw_bitmap_region(nanaMove, Nana.animation[0], Nana.animation[1], al_get_bitmap_width(nanaMove)/5,al_get_bitmap_height(nanaMove)/2,Nana.position[0],Nana.position[1]-60,0);
+                    al_draw_bitmap_region(dino, Dino.animation[0], Dino.animation[1], al_get_bitmap_width(dino)/3,al_get_bitmap_height(dino)/2,Dino.position[0],Dino.position[1]+camaraPosition[1]+2850,0);
                     displayFloors(floors,block);
 
                     al_flip_display();
@@ -1675,14 +1771,14 @@ int level1(ALLEGRO_DISPLAY *display){
                 if(event.type==ALLEGRO_EVENT_TIMER) {
 
                     //SET SCREEN LIMITS TO BOUNCER
-                    if (key[KEY_UP] && nanaPosition[1] >= 4.0 ) {
+                    if (key[KEY_UP] && Nana.position[1] >= 4.0 ) {
 
-                        nanaPosition[1] -= movementSpeed[1];
+                        Nana.position[1] -= movementSpeed[1];
 
                         //key[KEY_UP] = false;
                     }
-                    if(!key[KEY_UP] && nanaPosition[1] < 506-32){
-                        nanaPosition[1]+=acceleration[1];
+                    if(!key[KEY_UP] && Nana.position[1] < 506-32){
+                        Nana.position[1]+=acceleration[1];
                     }
                     if (key[KEY_DOWN] ) {
 
@@ -1690,37 +1786,38 @@ int level1(ALLEGRO_DISPLAY *display){
                     }
                     if (key[KEY_LEFT]) {
                         if(event.timer.source ==frameTimer) {
-                            nanaAnimation[0] += al_get_bitmap_width(nanaMove) / 5;
-                            nanaAnimation[1] = 0;
+                            Nana.animation[0] += al_get_bitmap_width(nanaMove) / 5;
+                            Nana.animation[1] = 0;
                         }
 
-                        if (nanaAnimation[0]>(al_get_bitmap_width(nanaMove)/5)*3){
-                            nanaAnimation[0]=0;
+                        if (Nana.animation[0]>(al_get_bitmap_width(nanaMove)/5)*3){
+                            Nana.animation[0]=0;
                         }
 
-                        if (nanaPosition[0]<-32){
-                            nanaPosition[0]=1000;
+                        if (Nana.position[0]<-32){
+                            Nana.position[0]=1000;
                         }else {
-                            nanaPosition[0]-= movementSpeed[0];
+                            Nana.position[0]-= movementSpeed[0];
                         }
                     }
                     if (key[KEY_RIGHT]) {
                         if(event.timer.source ==frameTimer) {
-                            nanaAnimation[0] += al_get_bitmap_width(nanaMove) / 5;
-                            nanaAnimation[1] = al_get_bitmap_height(nanaMove) / 2;
+                            Nana.animation[0] += al_get_bitmap_width(nanaMove) / 5;
+                            Nana.animation[1] = al_get_bitmap_height(nanaMove) / 2;
                         }
 
-                        if (nanaAnimation[0]>(al_get_bitmap_width(nanaMove)/5)*3){
-                            nanaAnimation[0]=0;
+                        if (Nana.animation[0]>(al_get_bitmap_width(nanaMove)/5)*3){
+                            Nana.animation[0]=0;
                         }
-                        if (nanaPosition[0]>1000){
-                            nanaPosition[0]=0;
+                        if (Nana.position[0]>1000){
+                            Nana.position[0]=0;
                         }else {
-                            nanaPosition[0] += movementSpeed[0];
+                            Nana.position[0] += movementSpeed[0];
                         }
                     }
 
-                    refreshCamara();
+                    refreshCamara(Popo);
+                    refreshCamara(Nana);
                     redraw=true;
 
                 }
@@ -1778,9 +1875,9 @@ int level1(ALLEGRO_DISPLAY *display){
                     al_clear_to_color(al_map_rgb(0,0,0));
 
                     al_draw_bitmap_region(background,0,0,1000,3450,camaraPosition[0],camaraPosition[1],0);
-                    al_draw_bitmap_region(popoMove, popoAnimation[0], popoAnimation[1], al_get_bitmap_width(popoMove)/5,al_get_bitmap_height(popoMove)/2,popoPosition[0],popoPosition[1]-60,0);
-                    al_draw_bitmap_region(nanaMove, nanaAnimation[0], nanaAnimation[1], al_get_bitmap_width(nanaMove)/5,al_get_bitmap_height(nanaMove)/2,nanaPosition[0],nanaPosition[1]-60,0);
-                    al_draw_bitmap_region(dino, dinoAnimation[0], dinoAnimation[1], al_get_bitmap_width(dino)/3,al_get_bitmap_height(dino)/2,dinoPosition[0],dinoPosition[1],0);
+                    al_draw_bitmap_region(popoMove, Popo.animation[0], Popo.animation[1], al_get_bitmap_width(popoMove)/5,al_get_bitmap_height(popoMove)/2,Popo.position[0],Popo.position[1]-60,0);
+                    al_draw_bitmap_region(nanaMove, Nana.animation[0], Nana.animation[1], al_get_bitmap_width(nanaMove)/5,al_get_bitmap_height(nanaMove)/2,Nana.position[0],Nana.position[1]-60,0);
+                    al_draw_bitmap_region(dino, Dino.animation[0], Dino.animation[1], al_get_bitmap_width(dino)/3,al_get_bitmap_height(dino)/2,Dino.position[0],Dino.position[1]+camaraPosition[1]+2850,0);
                     displayFloors(floors,block);
 
                     al_flip_display();
@@ -1797,7 +1894,8 @@ int level1(ALLEGRO_DISPLAY *display){
 
                 if(event.type==ALLEGRO_EVENT_TIMER){
 
-                    refreshCamara();
+                    refreshCamara(Popo);
+                    refreshCamara(Nana);
                     redraw=true;
                 }
 
@@ -1805,9 +1903,9 @@ int level1(ALLEGRO_DISPLAY *display){
                     redraw=false;
                     al_clear_to_color(al_map_rgb(0,0,0));
                     al_draw_bitmap_region(background,0,0,1000,3450,camaraPosition[0],camaraPosition[1],0);
-                    al_draw_bitmap_region(popoMove, popoAnimation[0], popoAnimation[1], al_get_bitmap_width(popoMove)/5,al_get_bitmap_height(popoMove)/2,popoPosition[0],popoPosition[1]-60,0);
-                    al_draw_bitmap_region(nanaMove, nanaAnimation[0], nanaAnimation[1], al_get_bitmap_width(nanaMove)/5,al_get_bitmap_height(nanaMove)/2,nanaPosition[0],nanaPosition[1]-60,0);
-                    al_draw_bitmap_region(dino, dinoAnimation[0], dinoAnimation[1], al_get_bitmap_width(dino)/3,al_get_bitmap_height(dino)/2,dinoPosition[0],dinoPosition[1],0);
+                    al_draw_bitmap_region(popoMove, Popo.animation[0], Popo.animation[1], al_get_bitmap_width(popoMove)/5,al_get_bitmap_height(popoMove)/2,Popo.position[0],Popo.position[1]-60,0);
+                    al_draw_bitmap_region(nanaMove, Nana.animation[0], Nana.animation[1], al_get_bitmap_width(nanaMove)/5,al_get_bitmap_height(nanaMove)/2,Nana.position[0],Nana.position[1]-60,0);
+                    al_draw_bitmap_region(dino, Dino.animation[0], Dino.animation[1], al_get_bitmap_width(dino)/3,al_get_bitmap_height(dino)/2,Dino.position[0],Dino.position[1]+camaraPosition[1]+2850,0);
                     displayFloors(floors,block);
 
 
@@ -1818,12 +1916,7 @@ int level1(ALLEGRO_DISPLAY *display){
             }
 
 
-
-
-
         }
-
-
 
 
 
@@ -1835,12 +1928,13 @@ int level1(ALLEGRO_DISPLAY *display){
     al_destroy_sample(jumpSound);
     al_destroy_sample(fieldSound);
     al_destroy_bitmap(popoMove);
+    al_destroy_bitmap(foca);
     al_destroy_bitmap(nanaMove);
     al_destroy_timer(frameTimer);
     al_destroy_bitmap(dino);
     al_destroy_bitmap(block);
     al_destroy_timer(timer);
-    al_destroy_display(display);
+
     al_destroy_event_queue(eventQueue);
 
     return 0;

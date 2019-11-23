@@ -8,15 +8,29 @@
 
 /home/gunther/CLionProjects/ICE_Client/ICE_Headers/ICE_Game.h
 
-/home/gunther/CLionProjects/ICE_Client/ICE_Sources/main.c
-stdio.h
--
-stdbool.h
--
-allegro5/bitmap.h
--
-allegro5/allegro.h
--
+/home/gunther/CLionProjects/ICE_Client/ICE_Headers/ICE_Json.h
+
+/home/gunther/CLionProjects/ICE_Client/ICE_Headers/ICE_Socket.h
+
+/home/gunther/CLionProjects/ICE_Client/ICE_Sources/ICE_Game.c
 ../ICE_Headers/ICE_Game.h
 /home/gunther/CLionProjects/ICE_Client/ICE_Headers/ICE_Game.h
+allegro5/allegro.h
+-
+allegro5/allegro_image.h
+/home/gunther/CLionProjects/ICE_Client/ICE_Sources/allegro5/allegro_image.h
+allegro5/allegro_audio.h
+-
+allegro5/allegro_acodec.h
+-
+allegro5/allegro_native_dialog.h
+-
+allegro5/allegro_primitives.h
+/home/gunther/CLionProjects/ICE_Client/ICE_Sources/allegro5/allegro_primitives.h
+stdio.h
+-
+../ICE_Headers/ICE_Json.h
+/home/gunther/CLionProjects/ICE_Client/ICE_Headers/ICE_Json.h
+../ICE_Headers/ICE_Socket.h
+/home/gunther/CLionProjects/ICE_Client/ICE_Headers/ICE_Socket.h
 
