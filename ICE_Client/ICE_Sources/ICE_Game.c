@@ -35,7 +35,7 @@ int playerID;
 //******************** PLAYERS *********************//
 
 struct Character{
-
+    bool jump;
     float position[2];
     float animation[2];
     float dimentions[2];
@@ -79,7 +79,7 @@ float camaraPosition[2]={0,-2850};
 
 //********************* BLOCKS *********************//
 
-void blockCollide(struct Floor floors[], struct Character *character){
+void blockCollide(struct Floor floors[], struct Character *character,ALLEGRO_SAMPLE *sound){
 
 
     for(int floor=0;floor<7;floor++){
@@ -90,11 +90,17 @@ void blockCollide(struct Floor floors[], struct Character *character){
 
                 struct Block tempBlock = floors[floor].blocks[block];
 
-                if(character->position[1]<tempBlock.position[1]+tempBlock.dimentions[1]+camaraPosition[1]+2850 ){
+                if(character->position[1]>tempBlock.position[1]+(tempBlock.dimentions[1]/2)+7 &&character->position[1]<tempBlock.position[1]+tempBlock.dimentions[1]+camaraPosition[1]+2850 && character->position[0]+(character->dimentions[0]/2)>=tempBlock.position[0] && character->position[0]+(character->dimentions[0]/2)<=tempBlock.position[0]+tempBlock.dimentions[0] &&tempBlock.state==true){
                     character->position[1]=tempBlock.position[1]+tempBlock.dimentions[1];
                     floors[floor].blocks[block].state=false;
-                    //character->position[1]=tempBlock.position[1]-character->dimentions[1];
+                    al_play_sample(sound, 0.5, 0.0,1.0,ALLEGRO_PLAYMODE_ONCE,NULL);
+                    character->score+=10;
                     printf("collide");
+                }
+
+                else if( character->position[1]+character->dimentions[1]<=tempBlock.position[1] && character->position[1]+character->dimentions[1]>=tempBlock.position[1]+camaraPosition[1]+2850&& character->position[0]+(character->dimentions[0]/2)>=tempBlock.position[0] && character->position[0]+(character->dimentions[0]/2)<=tempBlock.position[0]+tempBlock.dimentions[0] &&tempBlock.state==true){
+
+                    character->position[1]-=10;
                 }
 
 
@@ -109,10 +115,9 @@ void blockCollide(struct Floor floors[], struct Character *character){
 
                 struct Block tempBlock = floors[floor].blocks[block];
 
-                if(character->position[1]<=tempBlock.position[1]+tempBlock.dimentions[1]+camaraPosition[1]+2850 && tempBlock.position[0]<character->position[0]+character->dimentions[0]/2<tempBlock.position[0]+tempBlock.dimentions[0]){
-
+                if(character->position[1]<tempBlock.position[1]+tempBlock.dimentions[1]+camaraPosition[1]+2850 && character->position[0]+(character->dimentions[0]/2)>=tempBlock.position[0] && character->position[0]+(character->dimentions[0]/2)<=tempBlock.position[0]+tempBlock.dimentions[0] &&tempBlock.state==true){
+                    character->position[1]=tempBlock.position[1]+tempBlock.dimentions[1]+25;
                     floors[floor].blocks[block].state=false;
-                    //character->position[1]=tempBlock.position[1]-character->dimentions[1];
                     printf("collide");
                 }
 
@@ -127,10 +132,9 @@ void blockCollide(struct Floor floors[], struct Character *character){
 
                 struct Block tempBlock = floors[floor].blocks[block];
 
-                if(character->position[1]<=tempBlock.position[1]+tempBlock.dimentions[1]+camaraPosition[1]+2850 && tempBlock.position[0]<character->position[0]+character->dimentions[0]/2<tempBlock.position[0]+tempBlock.dimentions[0]){
-
+                if(character->position[1]<tempBlock.position[1]+tempBlock.dimentions[1]+camaraPosition[1]+2850 && character->position[0]+(character->dimentions[0]/2)>=tempBlock.position[0] && character->position[0]+(character->dimentions[0]/2)<=tempBlock.position[0]+tempBlock.dimentions[0] &&tempBlock.state==true){
+                    character->position[1]=tempBlock.position[1]+tempBlock.dimentions[1]+25;
                     floors[floor].blocks[block].state=false;
-                    //character->position[1]=tempBlock.position[1]-character->dimentions[1];
                     printf("collide");
                 }
 
@@ -1294,6 +1298,7 @@ int level1(ALLEGRO_DISPLAY *display){
     Popo.dimentions[1]=al_get_bitmap_height(popoMove)/2;
     Popo.lives=3;
     Popo.score=0;
+    Popo.jump=true;
 
     struct Character Nana;
     Nana.position[0]=250;
@@ -1304,6 +1309,7 @@ int level1(ALLEGRO_DISPLAY *display){
     Nana.dimentions[1]=al_get_bitmap_height(nanaMove)/2;
     Nana.lives=3;
     Nana.score=0;
+    Nana.jump=true;
 
     struct Character Dino;
     Dino.position[0]=125;
@@ -1359,19 +1365,19 @@ int level1(ALLEGRO_DISPLAY *display){
                 }
 
                 //SET SCREEN LIMITS TO PLAYER
-                if (key[KEY_UP]  ) {
-                    jump=false;
-                    Popo.position[1] -= movementSpeed[1];
-
-                    //key[KEY_UP] = false;
+                if (key[KEY_UP] && Popo.jump ) {
+                    Popo.jump=false;
+                    Popo.position[1] -= 300;
+                    al_play_sample(jumpSound, 1.0, 0.0, 1.0, ALLEGRO_PLAYMODE_ONCE, NULL);
+                    key[KEY_UP] = false;
                 }
 
-                if(!key[KEY_UP] && Popo.position[1] < 506-32){
+                if(!key[KEY_UP] && Popo.position[1] < 506-32+camaraPosition[1]+2850){
                     Popo.position[1]+=acceleration[1];
                 }
 
                 if (key[KEY_DOWN] ) {
-                    jump=true;
+                    Popo.jump=true;
                     printf("%s","Popo attack");
                 }
                 if (key[KEY_LEFT]) {
@@ -1413,7 +1419,8 @@ int level1(ALLEGRO_DISPLAY *display){
                     animateEnemy(dino,Dino.position,Dino.animation);
                 }
 
-                blockCollide(floors,&Popo);
+
+                blockCollide(floors,&Popo,fieldSound);
                 refreshCamara(Popo);
                 redraw=true;
 
@@ -1424,12 +1431,12 @@ int level1(ALLEGRO_DISPLAY *display){
                 switch (event.keyboard.keycode) {
                     case ALLEGRO_KEY_UP:
                         key[KEY_UP] = true;
-                        al_play_sample(jumpSound, 1.0, 0.0, 1.0, ALLEGRO_PLAYMODE_ONCE, NULL);
+
                         break;
 
                     case ALLEGRO_KEY_DOWN:
                         key[KEY_DOWN] = true;
-                        al_play_sample(fieldSound, 1.0, 0.0, 1.0, ALLEGRO_PLAYMODE_ONCE, NULL);
+
                         break;
 
                     case ALLEGRO_KEY_LEFT:
