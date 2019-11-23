@@ -39,7 +39,7 @@ float popoAnimation[2]={0,0};//POPO ANIMATION FRAMES
 float popoScore=0;//POPO SCORE
 float popoLives=3;//POPO LIVES
 
-float nanaPosition[2]={250,506-81};//NANA POSITION
+float nanaPosition[2]={250,425};//NANA POSITION
 float nanaAnimation[2]={0,0};//NANA ANIMATION FRAMES
 float nanaScore=0;//NANA SCORE
 float nanaLives=3;//NANA LIVES
@@ -51,6 +51,21 @@ float dinoAnimation[2]={0,0};//DINO ANIMATION FRAMES
 int dinoDirection=1;//DINO DIRECTION
 int dir=1;
 
+struct  Block{
+
+    bool state;
+    float dimentions[2];
+    float position[2];
+    float animation[2];
+};
+
+struct Floor{
+
+    bool state;
+    int type;
+    float position[2];
+    struct Block blocks[23];
+};
 
 //******************** CAMARA **********************//
 
@@ -60,6 +75,231 @@ float camaraPosition[2]={0,-2850};
 
 //************************************************************************************************************************************//
 //******************************************************* GAME COMPONENTS ************************************************************//
+
+//********************* BLOCKS *********************//
+
+
+
+void createBlocks(struct Block blocks[],ALLEGRO_BITMAP *image,int blockX,int blockY, int type){
+
+    //DETERMINE NUMBER OF BLOCKS PER FLOOR
+    //DETERMINE BLOCK COLOR
+    int len;
+    float section;
+    if(type==1){
+        len=23;
+        section=0;
+    }
+    else if(type==2){
+        len=21;
+        section=al_get_bitmap_width(image)/3;
+    }
+    else{
+        len=19;
+        section=(al_get_bitmap_width(image)/3)*2;
+    }
+
+    //CREATE BLOCKS AND PUT IT INTO BLOCK ARRAY
+    for(int counter=0;counter<len;counter++){
+
+        struct Block tempBlock;
+        tempBlock.position[0]=blockX;
+        tempBlock.position[1]=blockY;
+        tempBlock.animation[0]=section;
+        tempBlock.animation[1]=0;
+        tempBlock.dimentions[0]=al_get_bitmap_width(image)/3;
+        tempBlock.dimentions[1]=al_get_bitmap_height(image);
+        tempBlock.state=true;
+
+        blocks[counter]=tempBlock;
+        blockX+=al_get_bitmap_width(image)/3;
+    }
+
+}
+
+
+void createFloors(struct Floor floors[], ALLEGRO_BITMAP *image){
+
+    //CREATE FIRST FLOOR
+    struct Floor floor1;
+    floor1.state=true;
+    floor1.type=1;
+    floor1.position[0]=125;
+    floor1.position[1]=320;
+
+    //CREATE BLOCKS FOR FIRST FLOOR
+    createBlocks(floor1.blocks,image,floor1.position[0],floor1.position[1],floor1.type);
+
+    //SET FLOOR 1 INTO FLOORS ARRAY
+    floors[0]=floor1;
+
+    //***********************************************************
+
+    //CREATE SECOND FLOOR
+    struct Floor floor2;
+
+    floor2.state=true;
+    floor2.type=2;
+    floor2.position[0]=157;
+    floor2.position[1]=132;
+
+    //CREATE BLOCKS FOR SECOND FLOOR
+    createBlocks(floor2.blocks,image,floor2.position[0],floor2.position[1],floor2.type);
+
+    //SET FLOOR 2 INTO FLOORS ARRAY
+    floors[1]=floor2;
+
+    //***********************************************************
+
+    //CREATE THIRD FLOOR
+    struct Floor floor3;
+
+    floor3.state=true;
+    floor3.type=2;
+    floor3.position[0]=157;
+    floor3.position[1]=-59;
+
+    //CREATE BLOCKS FOR THIRD FLOOR
+    createBlocks(floor3.blocks,image,floor3.position[0],floor3.position[1],floor3.type);
+
+    //SET FLOOR 3 INTO FLOORS ARRAY
+    floors[2]=floor3;
+
+    //***********************************************************
+
+    //CREATE FOURTH FLOOR
+    struct Floor floor4;
+
+    floor4.state=true;
+    floor4.type=2;
+    floor4.position[0]=157;
+    floor4.position[1]=-247;
+
+    //CREATE BLOCKS FOR FOURTH FLOOR
+    createBlocks(floor4.blocks,image,floor4.position[0],floor4.position[1],floor4.type);
+
+    //SET FLOOR 4 INTO FLOORS ARRAY
+    floors[3]=floor4;
+
+    //***********************************************************
+
+    //CREATE FIVE FLOOR
+    struct Floor floor5;
+
+    floor5.state=true;
+    floor5.type=3;
+    floor5.position[0]=190;
+    floor5.position[1]=-435;
+
+    //CREATE BLOCKS FOR FIVE FLOOR
+    createBlocks(floor5.blocks,image,floor5.position[0],floor5.position[1],floor5.type);
+
+    //SET FLOOR 5 INTO FLOORS ARRAY
+    floors[4]=floor5;
+
+    //***********************************************************
+
+    //CREATE SIX FLOOR
+    struct Floor floor6;
+
+    floor6.state=true;
+    floor6.type=3;
+    floor6.position[0]=190;
+    floor6.position[1]=-623;
+
+    //CREATE BLOCKS FOR FOURTH FLOOR
+    createBlocks(floor6.blocks,image,floor6.position[0],floor6.position[1],floor6.type);
+
+    //SET FLOOR 6 INTO FLOORS ARRAY
+    floors[5]=floor6;
+
+    //***********************************************************
+
+    //CREATE SEVEN FLOOR
+    struct Floor floor7;
+
+    floor7.state=true;
+    floor7.type=3;
+    floor7.position[0]=190;
+    floor7.position[1]=-811;
+
+    //CREATE BLOCKS FOR SEVEN FLOOR
+    createBlocks(floor7.blocks,image,floor7.position[0],floor7.position[1],floor7.type);
+
+    //SET FLOOR 7 INTO FLOORS ARRAY
+    floors[6]=floor7;
+
+}
+
+
+
+void displayFloors(struct Floor floors[], ALLEGRO_BITMAP *image){
+
+    for(int floor=0;floor<7;floor++){
+
+        if(floors[floor].type==1) {
+
+            for (int block = 0; block < 23; block++) {
+
+                struct Block tempBlock = floors[floor].blocks[block];
+
+                al_draw_bitmap_region(image, tempBlock.animation[0], tempBlock.animation[1], tempBlock.dimentions[0],
+                                      tempBlock.dimentions[1], tempBlock.position[0],
+                                      tempBlock.position[1] + camaraPosition[1] + 2850, 0);
+            }
+
+        }
+        else if(floors[floor].type==2){
+
+            for (int block = 0; block < 21; block++) {
+
+                struct Block tempBlock = floors[floor].blocks[block];
+
+                al_draw_bitmap_region(image, tempBlock.animation[0], tempBlock.animation[1], tempBlock.dimentions[0],
+                                      tempBlock.dimentions[1], tempBlock.position[0],
+                                      tempBlock.position[1] + camaraPosition[1] + 2850, 0);
+            }
+
+
+        }
+        else if(floors[floor].type==3){
+
+            for (int block = 0; block < 19; block++) {
+
+                struct Block tempBlock = floors[floor].blocks[block];
+
+                al_draw_bitmap_region(image, tempBlock.animation[0], tempBlock.animation[1], tempBlock.dimentions[0],
+                                      tempBlock.dimentions[1], tempBlock.position[0],
+                                      tempBlock.position[1] + camaraPosition[1] + 2850, 0);
+            }
+
+
+
+        }
+
+
+
+
+    }
+
+
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 //********************* CAMARA *********************//
 
@@ -694,6 +934,7 @@ int levelIntro(ALLEGRO_DISPLAY *display) {
     bool running = true;
     bool redraw = true;
 
+
     //CREATE TIMER
     timer = al_create_timer(1.0 / FPS);
     frameTimer = al_create_timer(1.0 / AnimationFPS);
@@ -845,10 +1086,13 @@ int level1(ALLEGRO_DISPLAY *display){
     ALLEGRO_BITMAP *dino=NULL;
     ALLEGRO_BITMAP *block=NULL;
 
+
+
     //KEY VALUES (Determines which keys are able to be recognize)
     enum KEYS {KEY_UP, KEY_DOWN, KEY_LEFT, KEY_RIGHT, KEY_W, KEY_S, KEY_A, KEY_D};
     bool key[8] = { false, false, false, false, false, false, false, false };
     bool redraw=true;
+    bool jump=true;
     bool exit=false;
 
     //CREATE TIMERS
@@ -926,7 +1170,15 @@ int level1(ALLEGRO_DISPLAY *display){
 
     //CLEAR BITMAP
     al_clear_to_color(al_map_rgb(0,0,0));
+    //***********************************************************************************
+    //CREATE FLOORS
 
+    struct Floor floors[7];
+
+    createFloors(floors,block);
+
+
+    //***********************************************************************************
     //FLIP IMAGE BUFFERED
     al_flip_display();
 
@@ -960,8 +1212,8 @@ int level1(ALLEGRO_DISPLAY *display){
             if(event.type==ALLEGRO_EVENT_TIMER) {
 
                 //SET SCREEN LIMITS TO PLAYER
-                if (key[KEY_UP] && popoPosition[1] >= 4.0 ) {
-
+                if (key[KEY_UP]  ) {
+                    jump=false;
                     popoPosition[1] -= movementSpeed[1];
 
                     //key[KEY_UP] = false;
@@ -972,7 +1224,7 @@ int level1(ALLEGRO_DISPLAY *display){
                 }
 
                 if (key[KEY_DOWN] ) {
-
+                    jump=true;
                     printf("%s","Popo attack");
                 }
                 if (key[KEY_LEFT]) {
@@ -1007,7 +1259,8 @@ int level1(ALLEGRO_DISPLAY *display){
                     }
                 }
 
-                restartCamara();
+
+                refreshCamara();
                 redraw=true;
 
             }
@@ -1066,6 +1319,7 @@ int level1(ALLEGRO_DISPLAY *display){
                 al_draw_bitmap_region(background,0,0,1000,3450,camaraPosition[0],camaraPosition[1],0);
                 al_draw_bitmap_region(popoMove, popoAnimation[0], popoAnimation[1], al_get_bitmap_width(popoMove)/5,al_get_bitmap_height(popoMove)/2,popoPosition[0],popoPosition[1]-60,0);
                 al_draw_bitmap_region(dino, dinoAnimation[0], dinoAnimation[1], al_get_bitmap_width(dino)/3,al_get_bitmap_height(dino)/2,dinoPosition[0],dinoPosition[1],0);
+                displayFloors(floors,block);
 
                 al_flip_display();
             }
@@ -1272,7 +1526,7 @@ int level1(ALLEGRO_DISPLAY *display){
                 al_draw_bitmap_region(popoMove, popoAnimation[0], popoAnimation[1], al_get_bitmap_width(popoMove)/5,al_get_bitmap_height(popoMove)/2,popoPosition[0],popoPosition[1]-60,0);
                 al_draw_bitmap_region(nanaMove, nanaAnimation[0], nanaAnimation[1], al_get_bitmap_width(nanaMove)/5,al_get_bitmap_height(nanaMove)/2,nanaPosition[0],nanaPosition[1]-60,0);
                 al_draw_bitmap_region(dino, dinoAnimation[0], dinoAnimation[1], al_get_bitmap_width(dino)/3,al_get_bitmap_height(dino)/2,dinoPosition[0],dinoPosition[1],0);
-
+                displayFloors(floors,block);
 
                 al_flip_display();
             }
@@ -1403,6 +1657,7 @@ int level1(ALLEGRO_DISPLAY *display){
                     al_draw_bitmap_region(popoMove, popoAnimation[0], popoAnimation[1], al_get_bitmap_width(popoMove)/5,al_get_bitmap_height(popoMove)/2,popoPosition[0],popoPosition[1]-60,0);
                     al_draw_bitmap_region(nanaMove, nanaAnimation[0], nanaAnimation[1], al_get_bitmap_width(nanaMove)/5,al_get_bitmap_height(nanaMove)/2,nanaPosition[0],nanaPosition[1]-60,0);
                     al_draw_bitmap_region(dino, dinoAnimation[0], dinoAnimation[1], al_get_bitmap_width(dino)/3,al_get_bitmap_height(dino)/2,dinoPosition[0],dinoPosition[1],0);
+                    displayFloors(floors,block);
 
                     al_flip_display();
                 }
@@ -1526,6 +1781,7 @@ int level1(ALLEGRO_DISPLAY *display){
                     al_draw_bitmap_region(popoMove, popoAnimation[0], popoAnimation[1], al_get_bitmap_width(popoMove)/5,al_get_bitmap_height(popoMove)/2,popoPosition[0],popoPosition[1]-60,0);
                     al_draw_bitmap_region(nanaMove, nanaAnimation[0], nanaAnimation[1], al_get_bitmap_width(nanaMove)/5,al_get_bitmap_height(nanaMove)/2,nanaPosition[0],nanaPosition[1]-60,0);
                     al_draw_bitmap_region(dino, dinoAnimation[0], dinoAnimation[1], al_get_bitmap_width(dino)/3,al_get_bitmap_height(dino)/2,dinoPosition[0],dinoPosition[1],0);
+                    displayFloors(floors,block);
 
                     al_flip_display();
                 }
@@ -1548,13 +1804,13 @@ int level1(ALLEGRO_DISPLAY *display){
                 if(redraw && al_is_event_queue_empty(eventQueue)){
                     redraw=false;
                     al_clear_to_color(al_map_rgb(0,0,0));
-                    //al_draw_bitmap(bouncer3, 0, 506, 0);
                     al_draw_bitmap_region(background,0,0,1000,3450,camaraPosition[0],camaraPosition[1],0);
                     al_draw_bitmap_region(popoMove, popoAnimation[0], popoAnimation[1], al_get_bitmap_width(popoMove)/5,al_get_bitmap_height(popoMove)/2,popoPosition[0],popoPosition[1]-60,0);
                     al_draw_bitmap_region(nanaMove, nanaAnimation[0], nanaAnimation[1], al_get_bitmap_width(nanaMove)/5,al_get_bitmap_height(nanaMove)/2,nanaPosition[0],nanaPosition[1]-60,0);
                     al_draw_bitmap_region(dino, dinoAnimation[0], dinoAnimation[1], al_get_bitmap_width(dino)/3,al_get_bitmap_height(dino)/2,dinoPosition[0],dinoPosition[1],0);
+                    displayFloors(floors,block);
 
-                    //al_draw_bitmap(bouncer3, 0, 506, 0);
+
                     al_flip_display();
                 }
 
@@ -1680,8 +1936,8 @@ int startGame(int players) {
             enemySelectionScene(display);
         }
         else if(currentScene==3){
-            levelIntro(display);
-            restartCamara();
+            //levelIntro(display);
+            //restartCamara();
             level1(display);
         }
         else{
